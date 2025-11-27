@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getGlobalStats } from '@/lib/firebase/admin-firestore';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    // In production, you should verify admin auth here
-    // const authHeader = request.headers.get('authorization');
-    // Verify token and admin status
-
+    const { getGlobalStats } = await import('@/lib/firebase/admin-firestore');
     const stats = await getGlobalStats();
 
     return NextResponse.json(stats);
