@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import { StatsCard } from '@/components/stats-card';
 import { TenantCard } from '@/components/tenant-card';
@@ -22,7 +24,6 @@ export default function DashboardPage() {
   const [recentTenants, setRecentTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Sample data for charts (in production, fetch from API)
   const monthlyData = [
     { name: 'Jun', newTenants: 4, bookings: 24 },
     { name: 'Jul', newTenants: 3, bookings: 31 },
@@ -55,7 +56,6 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      // Fetch recent tenants
       const tenantsQuery = query(
         collection(db, 'tenants'),
         orderBy('created_at', 'desc'),
@@ -68,7 +68,6 @@ export default function DashboardPage() {
       })) as Tenant[];
       setRecentTenants(tenantsData);
 
-      // Fetch stats (simplified - in production use API endpoint)
       const allTenantsSnapshot = await getDocs(collection(db, 'tenants'));
       const activeTenants = allTenantsSnapshot.docs.filter(
         doc => doc.data().active
@@ -77,7 +76,6 @@ export default function DashboardPage() {
       const bookingsSnapshot = await getDocs(collection(db, 'bookings'));
       const totalBookings = bookingsSnapshot.size;
 
-      // Get bookings today
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const bookingsToday = bookingsSnapshot.docs.filter(doc => {
@@ -122,7 +120,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total de Clientes"
@@ -152,7 +149,6 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -197,12 +193,11 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      {/* Recent Tenants */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">Clientes Recentes</h2>
           <Button asChild variant="outline">
-            <Link href="/dashboard/tenants">Ver Todos</Link>
+            <Link href="/tenants">Ver Todos</Link>
           </Button>
         </div>
 
@@ -220,7 +215,7 @@ export default function DashboardPage() {
                 Nenhum cliente cadastrado ainda
               </p>
               <Button asChild className="mt-4">
-                <Link href="/dashboard/tenants/new">Criar Primeiro Cliente</Link>
+                <Link href="/tenants/new">Criar Primeiro Cliente</Link>
               </Button>
             </CardContent>
           </Card>
