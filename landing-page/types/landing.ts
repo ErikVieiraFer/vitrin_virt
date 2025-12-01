@@ -34,9 +34,12 @@ export interface PricingPlan {
   name: string;
   price: number;
   priceYearly: number;
+  priceOriginal?: number;
+  priceYearlyOriginal?: number;
   description: string;
   features: string[];
   highlighted?: boolean;
+  additionalInfo?: string;
   cta: string;
 }
 

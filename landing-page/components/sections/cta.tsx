@@ -41,13 +41,15 @@ export function CTA() {
 
               <FadeIn delay={0.4}>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Button
-                    size="lg"
-                    className="bg-white text-primary-600 hover:bg-slate-50 shadow-2xl group px-8 py-6 text-lg font-bold"
-                  >
-                    {ctaFinal.cta}
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  <a href="https://painel.vitrinevirt.com">
+                    <Button
+                      size="lg"
+                      className="bg-white/20 backdrop-blur-sm border-2 border-white text-white hover:bg-white/30 shadow-2xl group px-8 py-6 text-lg font-bold"
+                    >
+                      {ctaFinal.cta}
+                      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </a>
                 </div>
               </FadeIn>
 

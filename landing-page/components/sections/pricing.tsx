@@ -85,14 +85,22 @@ export function Pricing() {
                     <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
                     <p className="text-slate-600 text-sm mb-4">{plan.description}</p>
                     <div className="mb-6">
-                      {price === 0 && plan.name === 'Enterprise' ? (
+                      {plan.name === 'Enterprise' ? (
                         <div className="text-3xl font-bold text-slate-900">
-                          Consulte-nos
+                          A partir de R$150/mês
                         </div>
                       ) : (
                         <>
+                          {/* Preço original riscado */}
+                          {(isYearly ? plan.priceYearlyOriginal : plan.priceOriginal) && (
+                            <div className="text-xl text-gray-400 line-through mb-1">
+                              R$ {isYearly
+                                ? plan.priceYearlyOriginal?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+                                : plan.priceOriginal?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            </div>
+                          )}
                           <div className="text-5xl font-bold text-slate-900">
-                            {price === 0 ? 'R$ 0' : `R$ ${price}`}
+                            {price === 0 ? 'R$ 0' : `R$ ${price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                           </div>
                           <div className="text-slate-600 text-sm mt-1">
                             {isYearly ? 'por ano' : 'por mês'}
@@ -117,6 +125,13 @@ export function Pricing() {
                       ))}
                     </ul>
 
+                    {/* Additional Info */}
+                    {plan.additionalInfo && (
+                      <p className="text-xs text-slate-500 text-center">
+                        {plan.additionalInfo}
+                      </p>
+                    )}
+
                     {/* CTA Button */}
                     <Button
                       className="w-full"
@@ -135,10 +150,7 @@ export function Pricing() {
         {/* Additional Info */}
         <FadeIn delay={0.5}>
           <p className="text-center text-slate-600 mt-12">
-            Todos os planos incluem suporte técnico e atualizações gratuitas.{' '}
-            <a href="#" className="text-primary-600 hover:text-primary-700 font-medium">
-              Compare os planos →
-            </a>
+            Todos os planos incluem suporte técnico e atualizações gratuitas.
           </p>
         </FadeIn>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
@@ -86,8 +87,13 @@ export function SidebarMaster() {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-purple-800">
-            <h1 className="text-xl font-bold">Admin Master</h1>
-            <p className="text-xs text-purple-300 mt-1">Vitrine Virtual</p>
+            <div className="flex items-center gap-3">
+              <Image src="/logo.png" alt="Vitrine Virtual" width={40} height={40} className="rounded-lg" />
+              <div>
+                <h1 className="text-lg font-bold">Admin Master</h1>
+                <p className="text-xs text-purple-300">Vitrine Virtual</p>
+              </div>
+            </div>
           </div>
 
           {/* Menu Items */}

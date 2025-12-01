@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   Home,
@@ -68,8 +69,11 @@ export function Sidebar({ tenantName }: SidebarProps) {
   return (
     <aside className="w-64 bg-card border-r border-border h-screen flex flex-col">
       <div className="p-6 border-b border-border">
+        <div className="flex items-center gap-3 mb-2">
+          <Image src="/logo.png" alt="Vitrine Virtual" width={32} height={32} className="rounded-lg" />
+          <span className="text-sm font-medium text-muted-foreground">Vitrine Virtual</span>
+        </div>
         <h1 className="text-xl font-bold truncate">{tenantName}</h1>
-        <p className="text-sm text-muted-foreground">Painel Admin</p>
       </div>
 
       <nav className="flex-1 p-4 space-y-2">

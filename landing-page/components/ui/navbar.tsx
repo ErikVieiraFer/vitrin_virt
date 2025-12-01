@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 import { Button } from './button';
 import { cn } from '@/lib/utils';
@@ -39,9 +40,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-accent-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">V</span>
-            </div>
+            <Image src="/logo.png" alt="Vitrine Virtual" width={40} height={40} className="rounded-lg" />
             <span className="text-xl font-bold text-slate-900">Vitrine Virtual</span>
           </Link>
 
@@ -60,10 +59,14 @@ export function Navbar() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              Login
-            </Button>
-            <Button size="sm">Começar Grátis</Button>
+            <a href="https://painel.vitrinevirt.com">
+              <Button variant="ghost" size="sm">
+                Login
+              </Button>
+            </a>
+            <a href="https://painel.vitrinevirt.com">
+              <Button size="sm">Começar Grátis</Button>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -94,12 +97,16 @@ export function Navbar() {
                 </a>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-slate-200">
-                <Button variant="ghost" size="sm" className="w-full">
-                  Login
-                </Button>
-                <Button size="sm" className="w-full">
-                  Começar Grátis
-                </Button>
+                <a href="https://painel.vitrinevirt.com">
+                  <Button variant="ghost" size="sm" className="w-full">
+                    Login
+                  </Button>
+                </a>
+                <a href="https://painel.vitrinevirt.com">
+                  <Button size="sm" className="w-full">
+                    Começar Grátis
+                  </Button>
+                </a>
               </div>
             </div>
           </div>

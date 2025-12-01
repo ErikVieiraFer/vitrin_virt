@@ -177,7 +177,7 @@ export const pricingPlans: PricingPlan[] = [
     description: 'Perfeito para começar',
     features: [
       'Até 3 serviços',
-      '50 agendamentos/mês',
+      '20 agendamentos/mês',
       'Tema básico',
       'Suporte por email',
       'Integração WhatsApp',
@@ -186,8 +186,10 @@ export const pricingPlans: PricingPlan[] = [
   },
   {
     name: 'Pro',
-    price: 49,
-    priceYearly: 470,
+    price: 87.9,
+    priceYearly: 879.9,
+    priceOriginal: 199.9,
+    priceYearlyOriginal: 2000,
     description: 'Para negócios em crescimento',
     features: [
       'Serviços ilimitados',
@@ -195,7 +197,7 @@ export const pricingPlans: PricingPlan[] = [
       'Temas personalizados',
       'Suporte prioritário',
       'Integração WhatsApp',
-      'Analytics avançado',
+      'Relatórios completos',
       'Sem marca Vitrine Virtual',
     ],
     highlighted: true,
@@ -203,17 +205,18 @@ export const pricingPlans: PricingPlan[] = [
   },
   {
     name: 'Enterprise',
-    price: 0,
-    priceYearly: 0,
-    description: 'Solução personalizada',
+    price: 150,
+    priceYearly: 1800,
+    description: 'Para equipes e clínicas',
     features: [
       'Tudo do Pro +',
       'White label completo',
-      'Integração API',
+      'Pagamento integrado',
       'Suporte dedicado',
-      'Onboarding personalizado',
-      'SLA garantido',
+      'Configuração feita por nós',
+      'Garantia de funcionamento 24h',
     ],
+    additionalInfo: 'Profissionais adicionais: +R$50/cada',
     cta: 'Falar com Vendas',
   },
 ];
@@ -247,7 +250,7 @@ export const faqs: FAQ[] = [
   {
     question: 'Tem limite de agendamentos?',
     answer:
-      'O plano Basic tem limite de 50 agendamentos por mês. Os planos Pro e Enterprise têm agendamentos ilimitados para você crescer sem preocupações.',
+      'O plano Basic tem limite de 20 agendamentos por mês. Os planos Pro e Enterprise têm agendamentos ilimitados para você crescer sem preocupações.',
   },
   {
     question: 'Como recebo notificações dos agendamentos?',
