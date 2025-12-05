@@ -1,0 +1,14 @@
+.claude
+notepad .gitignore
+```
+
+Confirme que tem:
+```
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Next.js build
+.next/
+**/.next/
+out/
