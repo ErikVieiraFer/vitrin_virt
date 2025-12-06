@@ -80,7 +80,9 @@ export function FAQ() {
               Ainda tem dúvidas? Estamos aqui para ajudar!
             </p>
             <a
-              href="/contact"
+              href="https://wa.me/5527998547188"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-primary-600 hover:text-primary-700 font-semibold inline-flex items-center gap-2"
             >
               Entre em contato

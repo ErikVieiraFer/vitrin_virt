@@ -6,8 +6,8 @@ import { Instagram, MessageCircle } from 'lucide-react';
 import { footer } from '@/lib/content';
 
 const socialLinks = [
-  { name: 'Instagram', url: 'https://instagram.com/vitrinevirtual', icon: Instagram },
-  { name: 'WhatsApp', url: 'https://wa.me/5527999999999', icon: MessageCircle },
+  { name: 'Instagram', url: 'https://www.instagram.com/vitrinevirtofc', icon: Instagram },
+  { name: 'WhatsApp', url: 'https://wa.me/5527998547188', icon: MessageCircle },
 ];
 
 export function Footer() {

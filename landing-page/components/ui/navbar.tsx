@@ -59,12 +59,12 @@ export function Navbar() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <a href="https://painel.vitrinevirt.com">
+            <a href="https://painel.vitrinevirt.com/login" target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="sm">
                 Login
               </Button>
             </a>
-            <a href="https://painel.vitrinevirt.com">
+            <a href="https://painel.vitrinevirt.com/register" target="_blank" rel="noopener noreferrer">
               <Button size="sm">Começar Grátis</Button>
             </a>
           </div>
@@ -97,12 +97,12 @@ export function Navbar() {
                 </a>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-slate-200">
-                <a href="https://painel.vitrinevirt.com">
+                <a href="https://painel.vitrinevirt.com/login" target="_blank" rel="noopener noreferrer">
                   <Button variant="ghost" size="sm" className="w-full">
                     Login
                   </Button>
                 </a>
-                <a href="https://painel.vitrinevirt.com">
+                <a href="https://painel.vitrinevirt.com/register" target="_blank" rel="noopener noreferrer">
                   <Button size="sm" className="w-full">
                     Começar Grátis
                   </Button>

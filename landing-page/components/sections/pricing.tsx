@@ -133,13 +133,15 @@ export function Pricing() {
                     )}
 
                     {/* CTA Button */}
-                    <Button
-                      className="w-full"
-                      variant={plan.highlighted ? 'primary' : 'outline'}
-                      size="lg"
-                    >
-                      {plan.cta}
-                    </Button>
+                    <a href="https://painel.vitrinevirt.com/register" target="_blank" rel="noopener noreferrer">
+                      <Button
+                        className="w-full"
+                        variant={plan.highlighted ? 'primary' : 'outline'}
+                        size="lg"
+                      >
+                        {plan.cta}
+                      </Button>
+                    </a>
                   </CardContent>
                 </Card>
               </StaggerItem>

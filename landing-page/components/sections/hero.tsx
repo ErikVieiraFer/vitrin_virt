@@ -35,13 +35,13 @@ export function Hero() {
 
             <FadeIn delay={0.3}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://painel.vitrinevirt.com">
+                <a href="https://painel.vitrinevirt.com/register" target="_blank" rel="noopener noreferrer">
                   <Button size="lg" className="group">
                     {hero.ctaPrimary}
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </a>
-                <a href="https://app.vitrinevirt.com">
+                <a href="https://demo.vitrinevirt.com" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="lg" className="group">
                     <Play className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
                     {hero.ctaSecondary}
