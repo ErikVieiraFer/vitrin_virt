@@ -1,7 +1,14 @@
-import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Redirecionando...',
+};
 
 export default function RootPage() {
-  // Redirecionar para a página de login
-  // O middleware já faz isso, mas mantemos como fallback
-  redirect('/login');
+  // O middleware redireciona para /login
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p>Redirecionando...</p>
+    </div>
+  );
 }
