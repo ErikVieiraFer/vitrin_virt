@@ -20,7 +20,7 @@ export default function ProfilePage() {
     whatsapp: tenant?.whatsapp || '',
   });
 
-  const siteUrl = `https://${tenant?.subdomain}.seuapp.com`;
+  const siteUrl = `https://demo.vitrinevirt.com?tenant=${tenant?.subdomain}`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ export default function ProfilePage() {
 
       await updateTenant(tenant.id, {
         name: formData.name,
-        whatsapp: formData.whatsapp || undefined,
+        whatsapp: formData.whatsapp || '',
       });
 
       setSuccess(true);
