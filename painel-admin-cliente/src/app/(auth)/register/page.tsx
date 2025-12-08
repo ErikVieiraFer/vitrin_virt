@@ -69,7 +69,7 @@ export default function RegisterPage() {
         ownerUid: user.uid,
       });
 
-      router.push('/');
+      router.push('/dashboard');
     } catch (err: any) {
       console.error('Registration error:', err);
       if (err.code === 'auth/email-already-in-use') {

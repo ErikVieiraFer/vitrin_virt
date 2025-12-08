@@ -24,7 +24,7 @@ export default function LoginPage() {
 
     try {
       await signIn(email, password);
-      router.push('/');
+      router.push('/dashboard');
     } catch (err: any) {
       console.error('Login error:', err);
       if (err.code === 'auth/invalid-credential') {
