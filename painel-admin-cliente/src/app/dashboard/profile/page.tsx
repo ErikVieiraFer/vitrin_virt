@@ -20,7 +20,7 @@ export default function ProfilePage() {
     whatsapp: tenant?.whatsapp || '',
   });
 
-  const siteUrl = `https://demo.vitrinevirt.com?tenant=${tenant?.subdomain}`;
+  const siteUrl = `https://${tenant?.subdomain}.vitrinevirt.com`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

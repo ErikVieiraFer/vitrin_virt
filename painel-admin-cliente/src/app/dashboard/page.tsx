@@ -45,7 +45,7 @@ export default function DashboardPage() {
 
   const recentBookings = bookings.slice(0, 5);
 
-  const siteUrl = `https://demo.vitrinevirt.com?tenant=${tenant?.subdomain}`;
+  const siteUrl = `https://${tenant?.subdomain}.vitrinevirt.com`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(siteUrl);

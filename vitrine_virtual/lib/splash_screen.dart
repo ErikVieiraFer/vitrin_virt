@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/config/app_config.dart';
 import 'presentation/cubits/tenant/tenant_cubit.dart';
 import 'presentation/cubits/tenant/tenant_state.dart';
 import 'presentation/widgets/loading_indicator.dart';
@@ -26,19 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   String _extractSubdomain() {
-    final uri = Uri.base;
-    final host = uri.host;
-
-    if (host == 'localhost' || host == '127.0.0.1') {
-      return 'barbearia-teste';
-    }
-
-    final parts = host.split('.');
-    if (parts.length >= 3) {
-      return parts[0];
-    }
-
-    return 'barbearia-teste';
+    return AppConfig.extractSubdomain();
   }
 
   @override
