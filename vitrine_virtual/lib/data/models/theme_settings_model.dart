@@ -13,10 +13,25 @@ class ThemeSettingsModel extends Equatable {
   });
 
   factory ThemeSettingsModel.fromJson(Map<String, dynamic> json) {
+    // Suporta ambas nomenclaturas: snake_case e camelCase
+    final primaryColor = (json['primary_color'] ?? json['primaryColor']) as String?;
+    final secondaryColor = (json['secondary_color'] ?? json['secondaryColor']) as String?;
+    final fontFamily = (json['font_family'] ?? json['fontFamily']) as String?;
+
+    // Se não tiver cores, usa as cores padrão
+    if (primaryColor == null || secondaryColor == null) {
+      final defaults = ThemeSettingsModel.defaultSettings();
+      return ThemeSettingsModel(
+        primaryColor: primaryColor ?? defaults.primaryColor,
+        secondaryColor: secondaryColor ?? defaults.secondaryColor,
+        fontFamily: fontFamily,
+      );
+    }
+
     return ThemeSettingsModel(
-      primaryColor: json['primary_color'] as String,
-      secondaryColor: json['secondary_color'] as String,
-      fontFamily: json['font_family'] as String?,
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+      fontFamily: fontFamily,
     );
   }
 

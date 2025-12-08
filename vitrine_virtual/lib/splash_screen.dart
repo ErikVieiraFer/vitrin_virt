@@ -22,12 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _loadTenant() async {
-    final subdomain = _extractSubdomain();
+    final subdomain = AppConfig.extractSubdomain();
     context.read<TenantCubit>().loadTenant(subdomain);
-  }
-
-  String _extractSubdomain() {
-    return AppConfig.extractSubdomain();
   }
 
   @override
