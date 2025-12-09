@@ -91,6 +91,11 @@ class FirebaseDatasource {
 
   Future<List<ServiceModel>> getServicesByTenantId(String tenantId) async {
     try {
+      print('🔥🔥🔥 BUSCANDO SERVIÇOS PARA TENANT: $tenantId');
+      print('🔥 Collection: ${FirebaseConstants.servicesCollection}');
+      print('🔥 Field tenantId: ${FirebaseConstants.tenantIdField}');
+      print('🔥 Field active: ${FirebaseConstants.isActiveField}');
+
       final querySnapshot = await firestore
           .collection(FirebaseConstants.servicesCollection)
           .where(FirebaseConstants.tenantIdField, isEqualTo: tenantId)
@@ -98,10 +103,27 @@ class FirebaseDatasource {
           .orderBy(FirebaseConstants.createdAtField, descending: false)
           .get();
 
+      print('🔥 Documentos de serviços encontrados: ${querySnapshot.docs.length}');
+
+      if (querySnapshot.docs.isEmpty) {
+        print('⚠️ NENHUM SERVIÇO ENCONTRADO!');
+        print('⚠️ Verifique:');
+        print('   - tenantId no Firestore está como: PHtMoDffqKfaCs9RfDMF');
+        print('   - Campo active está como: true');
+        print('   - Campo tenantId está como: tenantId (camelCase)');
+      } else {
+        print('✅ Serviços encontrados:');
+        for (var doc in querySnapshot.docs) {
+          print('   - ${doc.data()}');
+        }
+      }
+
       return querySnapshot.docs
           .map((doc) => ServiceModel.fromJson(doc.data(), doc.id))
           .toList();
     } on FirebaseException catch (e) {
+      print('🔥 ERRO FIREBASE: ${e.code}');
+      print('🔥 Mensagem: ${e.message}');
       developer.log(
         '========================================',
         name: 'FirebaseDatasource.getServices',
@@ -278,6 +300,13 @@ class FirebaseDatasource {
 
       return [availability];
     } on FirebaseException catch (e) {
+      print('');
+      print('🔥🔥🔥 ERRO FIREBASE - getAvailability 🔥🔥🔥');
+      print('🔥 Código: ${e.code}');
+      print('🔥 Mensagem completa:');
+      print('${e.message}');
+      print('🔥🔥🔥 FIM DO ERRO 🔥🔥🔥');
+      print('');
       developer.log(
         '========================================',
         name: 'FirebaseDatasource.getAvailability',
@@ -300,6 +329,11 @@ class FirebaseDatasource {
       );
       throw ServerFailure(e.message ?? 'Erro ao buscar disponibilidade');
     } catch (e, stackTrace) {
+      print('');
+      print('⚠️⚠️⚠️ ERRO INESPERADO - getAvailability ⚠️⚠️⚠️');
+      print('$e');
+      print('⚠️⚠️⚠️ FIM DO ERRO ⚠️⚠️⚠️');
+      print('');
       developer.log(
         'ERRO INESPERADO ao processar disponibilidade: $e',
         name: 'FirebaseDatasource.getAvailability',
@@ -316,6 +350,14 @@ class FirebaseDatasource {
     required DateTime date,
   }) async {
     try {
+      print('📅📅📅 BUSCANDO BOOKINGS 📅📅📅');
+      print('📅 TenantId: $tenantId');
+      print('📅 Data: $date');
+      print('📅 Collection: ${FirebaseConstants.bookingsCollection}');
+      print('📅 Field tenantId: ${FirebaseConstants.tenantIdField}');
+      print('📅 Field bookingDate: ${FirebaseConstants.bookingDateField}');
+      print('📅 Field status: ${FirebaseConstants.statusField}');
+
       final startOfDay = DateTime(date.year, date.month, date.day);
       final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
@@ -339,10 +381,19 @@ class FirebaseDatasource {
           )
           .get();
 
+      print('📅 Bookings encontrados: ${querySnapshot.docs.length}');
+
       return querySnapshot.docs
           .map((doc) => BookingModel.fromJson(doc.data(), doc.id))
           .toList();
     } on FirebaseException catch (e) {
+      print('');
+      print('🔥🔥🔥 ERRO FIREBASE - getBookings 🔥🔥🔥');
+      print('🔥 Código: ${e.code}');
+      print('🔥 Mensagem completa (COPIE O LINK ABAIXO):');
+      print('${e.message}');
+      print('🔥🔥🔥 FIM DO ERRO 🔥🔥🔥');
+      print('');
       developer.log(
         '========================================',
         name: 'FirebaseDatasource.getBookings',
@@ -406,6 +457,11 @@ class FirebaseDatasource {
     required String time,
   }) async {
     try {
+      print('🕐🕐🕐 CHECK SLOT AVAILABILITY 🕐🕐🕐');
+      print('🕐 TenantId: $tenantId');
+      print('🕐 Data: $date');
+      print('🕐 Horário: $time');
+
       final startOfDay = DateTime(date.year, date.month, date.day);
       final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
@@ -430,8 +486,17 @@ class FirebaseDatasource {
           )
           .get();
 
+      print('🕐 Slot disponível: ${querySnapshot.docs.isEmpty}');
+
       return querySnapshot.docs.isEmpty;
     } on FirebaseException catch (e) {
+      print('');
+      print('🔥🔥🔥 ERRO FIREBASE - checkSlotAvailability 🔥🔥🔥');
+      print('🔥 Código: ${e.code}');
+      print('🔥 Mensagem completa (COPIE O LINK ABAIXO):');
+      print('${e.message}');
+      print('🔥🔥🔥 FIM DO ERRO 🔥🔥🔥');
+      print('');
       developer.log(
         '========================================',
         name: 'FirebaseDatasource.checkSlot',

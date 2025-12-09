@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -25,17 +27,65 @@ class ServiceModel extends Equatable {
   });
 
   factory ServiceModel.fromJson(Map<String, dynamic> json, String id) {
-    return ServiceModel(
-      id: id,
-      tenantId: json['tenant_id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      durationMinutes: json['duration_minutes'] as int,
-      price: (json['price'] as num).toDouble(),
-      imageUrl: json['image_url'] as String,
-      isActive: json['is_active'] as bool? ?? true,
-      createdAt: (json['created_at'] as Timestamp).toDate(),
-    );
+    developer.log('=== ServiceModel.fromJson INICIADO ===', name: 'ServiceModel');
+    developer.log('JSON recebido: $json', name: 'ServiceModel');
+    developer.log('ID: $id', name: 'ServiceModel');
+
+    try {
+      // Suporta ambas nomenclaturas: snake_case e camelCase
+      final tenantId = (json['tenant_id'] ?? json['tenantId']) as String?;
+      developer.log('tenantId: $tenantId', name: 'ServiceModel');
+
+      final name = json['name'] as String?;
+      developer.log('name: $name', name: 'ServiceModel');
+
+      final description = json['description'] as String?;
+      developer.log('description: $description', name: 'ServiceModel');
+
+      final durationMinutes = (json['duration_minutes'] ?? json['durationMinutes'] ?? json['duration']) as int?;
+      developer.log('durationMinutes: $durationMinutes', name: 'ServiceModel');
+
+      final priceRaw = json['price'];
+      final price = priceRaw is num ? priceRaw.toDouble() : 0.0;
+      developer.log('price: $price', name: 'ServiceModel');
+
+      final imageUrl = (json['image_url'] ?? json['imageUrl'] ?? json['image']) as String?;
+      developer.log('imageUrl: $imageUrl', name: 'ServiceModel');
+
+      final isActive = (json['is_active'] ?? json['isActive'] ?? json['active']) as bool? ?? true;
+      developer.log('isActive: $isActive', name: 'ServiceModel');
+
+      // createdAt pode ser Timestamp ou null
+      final createdAtRaw = json['created_at'] ?? json['createdAt'];
+      DateTime createdAt;
+      if (createdAtRaw is Timestamp) {
+        createdAt = createdAtRaw.toDate();
+      } else {
+        createdAt = DateTime.now();
+      }
+      developer.log('createdAt: $createdAt', name: 'ServiceModel');
+
+      return ServiceModel(
+        id: id,
+        tenantId: tenantId ?? '',
+        name: name ?? 'Sem nome',
+        description: description ?? '',
+        durationMinutes: durationMinutes ?? 30,
+        price: price,
+        imageUrl: imageUrl ?? '',
+        isActive: isActive,
+        createdAt: createdAt,
+      );
+    } catch (e, stackTrace) {
+      developer.log(
+        'ERRO ao fazer parse do ServiceModel: $e',
+        name: 'ServiceModel',
+        level: 1000,
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {

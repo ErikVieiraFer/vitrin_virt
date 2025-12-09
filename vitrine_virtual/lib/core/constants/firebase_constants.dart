@@ -4,7 +4,7 @@ class FirebaseConstants {
   static const String availabilityCollection = 'availability';
   static const String bookingsCollection = 'bookings';
 
-  static const String tenantIdField = 'tenant_id';
+  static const String tenantIdField = 'tenantId';
   static const String subdomainField = 'subdomain';
   static const String nameField = 'name';
   static const String logoUrlField = 'logo_url';
@@ -19,8 +19,8 @@ class FirebaseConstants {
   static const String durationMinutesField = 'duration_minutes';
   static const String priceField = 'price';
   static const String imageUrlField = 'image_url';
-  static const String isActiveField = 'is_active';
-  static const String createdAtField = 'created_at';
+  static const String isActiveField = 'active';
+  static const String createdAtField = 'createdAt';
 
   static const String customerNameField = 'customer_name';
   static const String customerPhoneField = 'customer_phone';
