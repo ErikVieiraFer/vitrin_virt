@@ -73,41 +73,44 @@ class _PhoneInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final text = newValue.text;
+    // Extrai apenas os dígitos
+    String digits = newValue.text.replaceAll(RegExp(r'\D'), '');
 
-    if (text.isEmpty) {
-      return newValue;
+    // Se estiver vazio, retorna vazio
+    if (digits.isEmpty) {
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
     }
 
+    // Garante que começa com 55 (código do Brasil)
+    if (!digits.startsWith('55')) {
+      digits = '55$digits';
+    }
+
+    // Limita a 13 dígitos (55 + DDD 2 dígitos + telefone 9 dígitos)
+    if (digits.length > 13) {
+      digits = digits.substring(0, 13);
+    }
+
+    // Formata: +55 XX XXXXX-XXXX
     final buffer = StringBuffer();
-    var offset = newValue.selection.baseOffset;
 
-    if (text.length >= 2 && !text.startsWith('55')) {
-      buffer.write('55');
-      offset += 2;
-    }
-
-    final digits = text.replaceAll(RegExp(r'\D'), '');
-
-    if (digits.length <= 2) {
-      buffer.write('+$digits');
-    } else if (digits.length <= 4) {
-      buffer.write('+${digits.substring(0, 2)} ${digits.substring(2)}');
-    } else if (digits.length <= 9) {
-      buffer.write(
-          '+${digits.substring(0, 2)} ${digits.substring(2, 4)} ${digits.substring(4)}');
-    } else {
-      buffer.write(
-          '+${digits.substring(0, 2)} ${digits.substring(2, 4)} ${digits.substring(4, 9)}-${digits.substring(9, digits.length > 13 ? 13 : digits.length)}');
+    for (int i = 0; i < digits.length; i++) {
+      if (i == 0) buffer.write('+');
+      if (i == 2) buffer.write(' '); // Após código do país
+      if (i == 4) buffer.write(' '); // Após DDD
+      if (i == 9) buffer.write('-'); // Antes dos últimos 4 dígitos
+      buffer.write(digits[i]);
     }
 
     final formatted = buffer.toString();
 
+    // Cursor sempre no final
     return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(
-        offset: offset > formatted.length ? formatted.length : offset,
-      ),
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

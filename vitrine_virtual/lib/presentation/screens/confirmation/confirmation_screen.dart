@@ -169,6 +169,7 @@ Aguardo confirmação. Obrigado!
       context,
       '/home',
       (route) => false,
+      arguments: {'tenant': tenant},
     );
   }
 }
