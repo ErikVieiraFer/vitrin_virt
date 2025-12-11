@@ -10,6 +10,10 @@ class DateTimeHelper {
     return date.isBefore(today);
   }
 
+  static bool isToday(DateTime date) {
+    return isSameDay(date, DateTime.now());
+  }
+
   static String formatDate(DateTime date, {String pattern = 'dd/MM/yyyy'}) {
     return DateFormat(pattern, 'pt_BR').format(date);
   }

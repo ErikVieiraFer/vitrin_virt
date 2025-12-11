@@ -1,4 +1,3 @@
-import 'dart:html' as html;
 import 'dart:developer' as developer;
 
 /// Configurações da aplicação
