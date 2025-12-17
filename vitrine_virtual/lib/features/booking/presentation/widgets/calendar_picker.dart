@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/date_time_helper.dart';
 
 /// Widget de seleção de data.
@@ -16,9 +18,9 @@ class CalendarPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: AppSpacing.paddingMd,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -28,7 +30,7 @@ class CalendarPicker extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
             CalendarDatePicker(
               initialDate: selectedDate ?? DateTimeHelper.today,
               firstDate: DateTimeHelper.today,

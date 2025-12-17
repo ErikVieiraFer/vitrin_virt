@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../services/domain/entities/service.dart';
 
 /// Card com informações detalhadas do serviço.
@@ -12,9 +13,9 @@ class ServiceInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: AppSpacing.paddingMd,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -24,14 +25,14 @@ class ServiceInfoCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(height: 12),
+            AppSpacing.verticalSm,
             Text(
               service.description,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
             const Divider(),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
             Row(
               children: [
                 Expanded(
@@ -79,17 +80,17 @@ class _InfoItem extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: 32,
+          size: AppSpacing.iconLg,
           color: Theme.of(context).colorScheme.primary,
         ),
-        const SizedBox(height: 8),
+        AppSpacing.verticalSm,
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: AppColors.textSecondary,
               ),
         ),
-        const SizedBox(height: 4),
+        AppSpacing.verticalXs,
         Text(
           value,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(

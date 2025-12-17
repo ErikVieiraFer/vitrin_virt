@@ -67,3 +67,7 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Flutter
+build/
+.dart_tool/chrome-device/

@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../services/domain/entities/service.dart';
 
 /// Card que exibe informações de um serviço.
@@ -38,14 +40,17 @@ class ServiceCard extends StatelessWidget {
                 ),
                 errorWidget: (context, url, error) => Container(
                   color: AppColors.divider,
-                  child: const Icon(Icons.image_not_supported, size: 50),
+                  child: const Icon(
+                    Icons.image_not_supported,
+                    size: AppConstants.placeholderIconSize,
+                  ),
                 ),
               ),
             ),
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: AppSpacing.paddingSm,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -65,10 +70,10 @@ class ServiceCard extends StatelessWidget {
                           children: [
                             const Icon(
                               Icons.access_time,
-                              size: 16,
+                              size: AppSpacing.md,
                               color: AppColors.textSecondary,
                             ),
-                            const SizedBox(width: 4),
+                            AppSpacing.horizontalXs,
                             Text(
                               service.formattedDuration,
                               style: Theme.of(context)

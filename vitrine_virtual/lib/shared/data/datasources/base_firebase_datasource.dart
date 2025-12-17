@@ -1,5 +1,6 @@
-import 'dart:developer' as developer;
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../../core/utils/app_logger.dart';
 
 /// Classe base para datasources Firebase.
 ///
@@ -11,51 +12,34 @@ abstract class BaseFirebaseDatasource {
 
   /// Loga erros do Firebase de forma padronizada.
   void logFirebaseError(String method, FirebaseException e) {
-    developer.log(
-      '========================================',
-      name: '$runtimeType.$method',
-      level: 1000,
-    );
-    developer.log(
-      'ERRO FIREBASE: ${e.code}',
-      name: '$runtimeType.$method',
-      level: 1000,
-    );
-    developer.log(
-      e.message ?? 'Sem mensagem',
-      name: '$runtimeType.$method',
-      level: 1000,
-    );
-    developer.log(
-      '========================================',
-      name: '$runtimeType.$method',
-      level: 1000,
+    AppLogger.firebaseError(
+      method,
+      e,
+      tag: '$runtimeType.$method',
     );
   }
 
   /// Loga informações de debug.
   void logInfo(String method, String message) {
-    developer.log(
+    AppLogger.info(
       message,
-      name: '$runtimeType.$method',
+      tag: '$runtimeType.$method',
     );
   }
 
   /// Loga warnings.
   void logWarning(String method, String message) {
-    developer.log(
+    AppLogger.warning(
       message,
-      name: '$runtimeType.$method',
-      level: 900,
+      tag: '$runtimeType.$method',
     );
   }
 
   /// Loga erros.
   void logError(String method, String message, [Object? error, StackTrace? stackTrace]) {
-    developer.log(
+    AppLogger.error(
       message,
-      name: '$runtimeType.$method',
-      level: 1000,
+      tag: '$runtimeType.$method',
       error: error,
       stackTrace: stackTrace,
     );

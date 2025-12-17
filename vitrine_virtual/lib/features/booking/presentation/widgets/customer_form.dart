@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/formatters/phone_input_formatter.dart';
 import '../../../../core/utils/validators.dart';
 
 /// Formulário de dados do cliente.
@@ -18,9 +21,9 @@ class CustomerForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: AppSpacing.paddingMd,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingMd,
         child: Form(
           key: formKey,
           child: Column(
@@ -32,7 +35,7 @@ class CustomerForm extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(
@@ -44,7 +47,7 @@ class CustomerForm extends StatelessWidget {
                 validator: Validators.validateName,
                 textInputAction: TextInputAction.next,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
               TextFormField(
                 controller: phoneController,
                 decoration: const InputDecoration(
@@ -55,7 +58,7 @@ class CustomerForm extends StatelessWidget {
                 keyboardType: TextInputType.phone,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  _PhoneInputFormatter(),
+                  BrazilianPhoneFormatter(),
                 ],
                 validator: Validators.validatePhone,
                 textInputAction: TextInputAction.done,
@@ -64,52 +67,6 @@ class CustomerForm extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Formatter para máscara de telefone brasileiro.
-class _PhoneInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    String digits = newValue.text.replaceAll(RegExp(r'\D'), '');
-
-    if (digits.isEmpty) {
-      return const TextEditingValue(
-        text: '',
-        selection: TextSelection.collapsed(offset: 0),
-      );
-    }
-
-    // Garante que começa com 55 (código do Brasil)
-    if (!digits.startsWith('55')) {
-      digits = '55$digits';
-    }
-
-    // Limita a 13 dígitos (55 + DDD 2 dígitos + telefone 9 dígitos)
-    if (digits.length > 13) {
-      digits = digits.substring(0, 13);
-    }
-
-    // Formata: +55 XX XXXXX-XXXX
-    final buffer = StringBuffer();
-
-    for (int i = 0; i < digits.length; i++) {
-      if (i == 0) buffer.write('+');
-      if (i == 2) buffer.write(' ');
-      if (i == 4) buffer.write(' ');
-      if (i == 9) buffer.write('-');
-      buffer.write(digits[i]);
-    }
-
-    final formatted = buffer.toString();
-
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

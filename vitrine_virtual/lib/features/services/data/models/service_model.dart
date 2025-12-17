@@ -1,9 +1,8 @@
-import 'dart:developer' as developer;
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/domain/value_objects/money.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/service.dart';
 
 /// Modelo de dados para Service (serviço oferecido).
@@ -37,37 +36,28 @@ class ServiceModel extends Equatable {
   ///
   /// Suporta ambas nomenclaturas: snake_case e camelCase.
   factory ServiceModel.fromJson(Map<String, dynamic> json, String id) {
-    developer.log('=== ServiceModel.fromJson INICIADO ===', name: 'ServiceModel');
-    developer.log('JSON recebido: $json', name: 'ServiceModel');
-    developer.log('ID: $id', name: 'ServiceModel');
+    AppLogger.debug(
+      'Parsing ServiceModel - ID: $id, Data: $json',
+      tag: 'ServiceModel',
+    );
 
     try {
       final tenantId = (json['tenant_id'] ?? json['tenantId']) as String?;
-      developer.log('tenantId: $tenantId', name: 'ServiceModel');
-
       final name = json['name'] as String?;
-      developer.log('name: $name', name: 'ServiceModel');
-
       final description = json['description'] as String?;
-      developer.log('description: $description', name: 'ServiceModel');
-
       final durationMinutes = (json['duration_minutes'] ??
           json['durationMinutes'] ??
           json['duration']) as int?;
-      developer.log('durationMinutes: $durationMinutes', name: 'ServiceModel');
 
       final priceRaw = json['price'];
       final price = priceRaw is num ? priceRaw.toDouble() : 0.0;
-      developer.log('price: $price', name: 'ServiceModel');
 
       final imageUrl =
           (json['image_url'] ?? json['imageUrl'] ?? json['image']) as String?;
-      developer.log('imageUrl: $imageUrl', name: 'ServiceModel');
 
       final isActive =
           (json['is_active'] ?? json['isActive'] ?? json['active']) as bool? ??
               true;
-      developer.log('isActive: $isActive', name: 'ServiceModel');
 
       final createdAtRaw = json['created_at'] ?? json['createdAt'];
       DateTime createdAt;
@@ -76,7 +66,6 @@ class ServiceModel extends Equatable {
       } else {
         createdAt = DateTime.now();
       }
-      developer.log('createdAt: $createdAt', name: 'ServiceModel');
 
       return ServiceModel(
         id: id,
@@ -90,10 +79,9 @@ class ServiceModel extends Equatable {
         createdAt: createdAt,
       );
     } catch (e, stackTrace) {
-      developer.log(
-        'ERRO ao fazer parse do ServiceModel: $e',
-        name: 'ServiceModel',
-        level: 1000,
+      AppLogger.error(
+        'Erro ao fazer parse do ServiceModel',
+        tag: 'ServiceModel',
         error: e,
         stackTrace: stackTrace,
       );

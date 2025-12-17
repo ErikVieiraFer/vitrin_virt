@@ -1,8 +1,7 @@
-import 'dart:developer' as developer;
-
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/domain/value_objects/phone.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/tenant.dart';
 import 'theme_settings_model.dart';
 
@@ -31,26 +30,17 @@ class TenantModel extends Equatable {
   ///
   /// Suporta ambas nomenclaturas: snake_case e camelCase.
   factory TenantModel.fromJson(Map<String, dynamic> json, String id) {
-    developer.log('=== TenantModel.fromJson INICIADO ===', name: 'TenantModel');
-    developer.log('JSON recebido: $json', name: 'TenantModel');
-    developer.log('ID: $id', name: 'TenantModel');
+    AppLogger.debug(
+      'Parsing TenantModel - ID: $id, Data: $json',
+      tag: 'TenantModel',
+    );
 
     try {
       final subdomain = json['subdomain'] as String?;
-      developer.log('subdomain: $subdomain', name: 'TenantModel');
-
       final name = json['name'] as String?;
-      developer.log('name: $name', name: 'TenantModel');
-
-      // Suporta logo_url e logoUrl
       final logoUrl = (json['logo_url'] ?? json['logoUrl']) as String?;
-      developer.log('logoUrl: $logoUrl', name: 'TenantModel');
-
       final whatsapp = json['whatsapp'] as String?;
-      developer.log('whatsapp: $whatsapp', name: 'TenantModel');
-
       final themeSettingsData = json['theme_settings'] ?? json['themeSettings'];
-      developer.log('themeSettings: $themeSettingsData', name: 'TenantModel');
 
       return TenantModel(
         id: id,
@@ -64,10 +54,9 @@ class TenantModel extends Equatable {
             : ThemeSettingsModel.defaultSettings(),
       );
     } catch (e, stackTrace) {
-      developer.log(
-        'ERRO ao fazer parse do TenantModel: $e',
-        name: 'TenantModel',
-        level: 1000,
+      AppLogger.error(
+        'Erro ao fazer parse do TenantModel',
+        tag: 'TenantModel',
         error: e,
         stackTrace: stackTrace,
       );

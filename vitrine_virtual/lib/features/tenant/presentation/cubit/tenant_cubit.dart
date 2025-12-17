@@ -1,5 +1,6 @@
-import 'dart:developer' as developer;
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/usecases/get_tenant_by_subdomain.dart';
 import 'tenant_state.dart';
 
@@ -15,10 +16,7 @@ class TenantCubit extends Cubit<TenantState> {
 
   /// Carrega o tenant pelo subdomínio.
   Future<void> loadTenant(String subdomain) async {
-    developer.log(
-      'Cubit: Iniciando carregamento do tenant - subdomain: $subdomain',
-      name: 'TenantCubit',
-    );
+    AppLogger.state('TenantCubit', 'Loading', extra: 'subdomain: $subdomain');
 
     emit(const TenantLoading());
 
@@ -26,18 +24,15 @@ class TenantCubit extends Cubit<TenantState> {
 
     result.fold(
       (failure) {
-        developer.log(
-          'Cubit: ERRO ao carregar tenant - ${failure.message}',
-          name: 'TenantCubit',
-          level: 1000,
+        AppLogger.error(
+          'Erro ao carregar tenant',
+          tag: 'TenantCubit',
+          error: failure.message,
         );
         emit(TenantError(failure.message));
       },
       (tenant) {
-        developer.log(
-          'Cubit: Tenant carregado com sucesso - Nome: ${tenant.name}',
-          name: 'TenantCubit',
-        );
+        AppLogger.state('TenantCubit', 'Loaded', extra: 'Nome: ${tenant.name}');
         emit(TenantLoaded(tenant));
       },
     );

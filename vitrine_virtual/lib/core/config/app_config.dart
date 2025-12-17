@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+import 'package:vitrine_virtual/core/utils/app_logger.dart';
 
 /// Configurações da aplicação
 class AppConfig {
@@ -6,39 +6,37 @@ class AppConfig {
   static String extractSubdomain() {
     final uri = Uri.base;
 
-    developer.log('=== AppConfig.extractSubdomain INICIADO ===', name: 'AppConfig');
-    developer.log('URI completa: ${uri.toString()}', name: 'AppConfig');
+    AppLogger.debug('Extraindo subdomínio - URI: ${uri.toString()}', tag: 'AppConfig');
 
     // 1. Primeiro tenta pegar o tenant via query parameter
     final tenantParam = uri.queryParameters['tenant'];
     if (tenantParam != null && tenantParam.isNotEmpty) {
-      developer.log('Tenant via query param: $tenantParam', name: 'AppConfig');
+      AppLogger.info('Tenant via query param: $tenantParam', tag: 'AppConfig');
       return tenantParam.toLowerCase().trim();
     }
 
     // 2. Se não tem query param, extrai do hostname
     final host = uri.host.toLowerCase();
-    developer.log('Host detectado: $host', name: 'AppConfig');
+    AppLogger.debug('Host detectado: $host', tag: 'AppConfig');
 
     // Localhost ou IP local → usa "demo" como padrão
     if (host == 'localhost' || host == '127.0.0.1' || host.isEmpty) {
-      developer.log('Localhost detectado, usando demo', name: 'AppConfig');
+      AppLogger.info('Localhost detectado, usando demo', tag: 'AppConfig');
       return 'demo';
     }
 
     // Extrai o subdomínio (primeira parte antes do primeiro ponto)
     final parts = host.split('.');
-    developer.log('Host dividido em partes: $parts', name: 'AppConfig');
 
     // Deve ter pelo menos 3 partes: [subdomain, domain, tld]
     if (parts.length >= 3) {
       final subdomain = parts[0].trim();
-      developer.log('Subdomínio extraído: $subdomain', name: 'AppConfig');
+      AppLogger.info('Subdomínio extraído: $subdomain', tag: 'AppConfig');
       return subdomain;
     }
 
     // Fallback para demo
-    developer.log('Usando fallback demo', name: 'AppConfig');
+    AppLogger.info('Usando fallback demo', tag: 'AppConfig');
     return 'demo';
   }
 }

@@ -1,8 +1,7 @@
-import 'dart:developer' as developer;
-
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/errors/failures.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/tenant.dart';
 import '../../domain/repositories/tenant_repository.dart';
 import '../datasources/tenant_remote_datasource.dart';
@@ -21,34 +20,32 @@ class TenantRepositoryImpl implements TenantRepository {
     String subdomain,
   ) async {
     try {
-      developer.log(
-        'Repository: Buscando tenant para subdomain: $subdomain',
-        name: 'TenantRepository',
+      AppLogger.info(
+        'Buscando tenant para subdomain: $subdomain',
+        tag: 'TenantRepository',
       );
 
       final tenantModel = await remoteDatasource.getTenantBySubdomain(subdomain);
 
-      developer.log(
-        'Repository: Tenant carregado com sucesso - ID: ${tenantModel.id}',
-        name: 'TenantRepository',
+      AppLogger.info(
+        'Tenant carregado com sucesso - ID: ${tenantModel.id}',
+        tag: 'TenantRepository',
       );
 
       // Converte Model para Entity
       return Right(tenantModel.toEntity());
     } on Failure catch (failure) {
-      developer.log(
-        'Repository: Failure capturado - ${failure.message}',
-        name: 'TenantRepository',
-        level: 1000,
+      AppLogger.warning(
+        'Failure capturado - ${failure.message}',
+        tag: 'TenantRepository',
       );
       return Left(failure);
     } catch (e, stackTrace) {
-      developer.log(
-        'Repository: ERRO INESPERADO - $e',
-        name: 'TenantRepository',
+      AppLogger.error(
+        'Erro inesperado ao buscar tenant',
+        tag: 'TenantRepository',
         error: e,
         stackTrace: stackTrace,
-        level: 1000,
       );
       return const Left(UnknownFailure('Erro inesperado ao buscar tenant'));
     }

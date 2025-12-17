@@ -54,6 +54,10 @@ dependencies:
   get_it: ^8.0.2
   injectable: ^2.5.0
 
+  flutter_dotenv: ^5.1.0
+  stripe_checkout: ^4.0.0
+  http: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
