@@ -107,14 +107,14 @@ class ServiceModel extends Equatable {
   /// Converte para JSON para persistência.
   Map<String, dynamic> toJson() {
     return {
-      'tenant_id': tenantId,
+      'tenantId': tenantId,
       'name': name,
       'description': description,
-      'duration_minutes': durationMinutes,
+      'duration': durationMinutes,
       'price': price,
-      'image_url': imageUrl,
-      'is_active': isActive,
-      'created_at': Timestamp.fromDate(createdAt),
+      'imageUrl': imageUrl,
+      'active': isActive,
+      'createdAt': Timestamp.fromDate(createdAt),
     };
   }
 

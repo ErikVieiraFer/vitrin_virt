@@ -1,0 +1,1 @@
+ /Volumes/D/development/vitrin_virt/vitrin_virt/vitrine_virtual/.dart_tool/flutter_build/65578702f58aeed8d58abbd3addee6fa/native_assets.json: 

@@ -18,7 +18,6 @@ class ServiceRemoteDatasourceImpl extends BaseFirebaseDatasource
       final querySnapshot = await firestore
           .collection(FirebaseConstants.servicesCollection)
           .where(FirebaseConstants.tenantIdField, isEqualTo: tenantId)
-          .where(FirebaseConstants.isActiveField, isEqualTo: true)
           .orderBy(FirebaseConstants.createdAtField, descending: false)
           .get();
 
