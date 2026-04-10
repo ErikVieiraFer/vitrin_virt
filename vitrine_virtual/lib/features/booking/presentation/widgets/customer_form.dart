@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters/phone_input_formatter.dart';
@@ -57,7 +56,6 @@ class CustomerForm extends StatelessWidget {
                 ),
                 keyboardType: TextInputType.phone,
                 inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
                   BrazilianPhoneFormatter(),
                 ],
                 validator: Validators.validatePhone,

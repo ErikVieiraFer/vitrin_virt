@@ -24,19 +24,21 @@ class Validators {
       return 'Telefone é obrigatório';
     }
 
-    final cleanPhone = value.replaceAll(RegExp(r'[^\d+]'), '');
+    // Remove toda formatação: espaços, traços, parênteses, +
+    final digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
 
-    if (!cleanPhone.startsWith('+55')) {
-      return 'Telefone deve começar com +55';
+    // Remove o código do país (55) se o número tiver 12 ou 13 dígitos
+    final localDigits = (digitsOnly.startsWith('55') &&
+            (digitsOnly.length == 12 || digitsOnly.length == 13))
+        ? digitsOnly.substring(2)
+        : digitsOnly;
+
+    // Número brasileiro: 10 dígitos (fixo) ou 11 dígitos (celular com 9)
+    if (localDigits.length < 10 || localDigits.length > 11) {
+      return 'Telefone inválido. Use: (27) 99999-9999';
     }
 
-    final digitsOnly = cleanPhone.replaceAll('+55', '');
-
-    if (digitsOnly.length != 11) {
-      return 'Telefone deve ter 11 dígitos (DDD + número)';
-    }
-
-    final ddd = int.tryParse(digitsOnly.substring(0, 2));
+    final ddd = int.tryParse(localDigits.substring(0, 2));
     if (ddd == null || ddd < 11 || ddd > 99) {
       return 'DDD inválido';
     }

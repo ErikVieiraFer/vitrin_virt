@@ -1,0 +1,1 @@
+ C:\\Programs\\projetos_pessoais\\vitrin_virt\\vitrine_virtual\\.dart_tool\\flutter_build\\f01f42da94bffa2003c65aa7f41aa68b\\dart_build_result.json: 

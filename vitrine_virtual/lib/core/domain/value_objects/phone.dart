@@ -22,9 +22,14 @@ class Phone extends Equatable {
   /// Valor bruto (apenas dígitos).
   String get value => _value;
 
-  /// Verifica se o telefone é válido (10 ou 11 dígitos).
+  /// Verifica se o telefone é válido (10 ou 11 dígitos locais, com ou sem +55).
   bool get isValid {
-    return _value.length == 10 || _value.length == 11;
+    final digitsOnly = _value.replaceAll(RegExp(r'[^\d]'), '');
+    final localDigits = (digitsOnly.startsWith('55') &&
+            (digitsOnly.length == 12 || digitsOnly.length == 13))
+        ? digitsOnly.substring(2)
+        : digitsOnly;
+    return localDigits.length == 10 || localDigits.length == 11;
   }
 
   /// Verifica se é celular (11 dígitos, começando com 9).
