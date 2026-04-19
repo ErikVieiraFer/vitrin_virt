@@ -18,9 +18,9 @@ export function TenantCard({ tenant, stats }: TenantCardProps) {
         <div className="flex items-start gap-4">
           {/* Logo */}
           <div className="flex-shrink-0">
-            {tenant.logo_url ? (
+            {(tenant.logo_url ?? (tenant as any).logoUrl) ? (
               <img
-                src={tenant.logo_url}
+                src={tenant.logo_url ?? (tenant as any).logoUrl}
                 alt={tenant.name}
                 className="h-16 w-16 rounded-full object-cover"
               />
@@ -65,7 +65,10 @@ export function TenantCard({ tenant, stats }: TenantCardProps) {
             )}
 
             <p className="text-xs text-muted-foreground">
-              Cadastrado em {formatDate(tenant.created_at.toDate())}
+              {(() => {
+                const ts = (tenant as any).createdAt ?? (tenant as any).created_at;
+                return ts?.toDate ? `Cadastrado em ${formatDate(ts.toDate())}` : null;
+              })()}
             </p>
           </div>
         </div>
@@ -80,10 +83,14 @@ export function TenantCard({ tenant, stats }: TenantCardProps) {
           </Button>
 
           <Button asChild variant="default" className="flex-1">
-            <Link href={`/dashboard/tenants/${tenant.id}/impersonate`}>
+            <a
+              href={`${process.env.NEXT_PUBLIC_CLIENT_PANEL_URL ?? 'https://painel.vitrinevirt.com'}/?impersonate=${tenant.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <ExternalLink className="h-4 w-4 mr-2" />
               Acessar Painel
-            </Link>
+            </a>
           </Button>
         </div>
       </CardContent>

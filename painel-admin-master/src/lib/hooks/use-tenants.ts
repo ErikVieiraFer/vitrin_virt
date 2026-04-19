@@ -13,7 +13,7 @@ export function useTenants() {
   useEffect(() => {
     const tenantsQuery = query(
       collection(db, 'tenants'),
-      orderBy('created_at', 'desc')
+      orderBy('createdAt', 'desc')
     );
 
     const unsubscribe = onSnapshot(

@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
-  LayoutDashboard,
   Users,
   BarChart3,
   Calendar,
@@ -20,11 +19,6 @@ import { useAdminAuth } from '@/lib/hooks/use-admin-auth';
 import { Button } from './ui/button';
 
 const menuItems = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-  },
   {
     title: 'Clientes',
     href: '/dashboard/tenants',
