@@ -1,16 +1,14 @@
 import { adminAuth, adminDb } from './admin-config';
 
 /**
- * Verify if an email is an admin
+ * Verify if an email is an admin (checks ADMIN_EMAILS env var).
  */
-export async function isAdmin(email: string): Promise<boolean> {
-  try {
-    const adminDoc = await adminDb.collection('admins').doc(email).get();
-    return adminDoc.exists;
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    return false;
-  }
+export function isAdmin(email: string): boolean {
+  const adminEmails = (process.env.ADMIN_EMAILS ?? '')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return adminEmails.includes(email.trim().toLowerCase());
 }
 
 /**
@@ -66,7 +64,7 @@ export async function verifyAdminToken(idToken: string): Promise<{ uid: string; 
       return { uid: decodedToken.uid, isAdmin: false };
     }
 
-    const adminStatus = await isAdmin(email);
+    const adminStatus = isAdmin(email);
 
     return {
       uid: decodedToken.uid,

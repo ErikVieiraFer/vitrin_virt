@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase/config';
-import { doc, getDoc } from 'firebase/firestore';
+import { auth } from '@/lib/firebase/config';
 import { useRouter } from 'next/navigation';
 
 interface AdminUser {
@@ -43,9 +42,13 @@ export function useAdminAuth() {
     if (!email) return false;
 
     try {
-      const adminDocRef = doc(db, 'admins', email);
-      const adminDoc = await getDoc(adminDocRef);
-      return adminDoc.exists();
+      const response = await fetch('/api/admin/verify-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      return data.isAdmin === true;
     } catch (error) {
       console.error('Error checking admin status:', error);
       return false;
