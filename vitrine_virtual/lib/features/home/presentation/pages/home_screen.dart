@@ -9,6 +9,7 @@ import '../../../services/presentation/cubit/services_state.dart';
 import '../../../tenant/domain/entities/tenant.dart';
 import '../widgets/service_grid.dart';
 import '../widgets/tenant_header.dart';
+import '../widgets/vitrine_sections_view.dart';
 
 /// Tela principal que exibe os serviços do tenant.
 class HomeScreen extends StatefulWidget {
@@ -54,6 +55,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
 
                 if (state is ServicesLoaded) {
+                  // Com seções customizadas: renderiza a vitrine montada no editor.
+                  // Sem seções (tenant legado): mantém o grid de serviços padrão.
+                  if (widget.tenant.sections.isNotEmpty) {
+                    return VitrineSectionsView(
+                      sections: widget.tenant.sections,
+                      services: state.services,
+                      onServiceTap: _navigateToServiceDetail,
+                    );
+                  }
                   return ServiceGrid(
                     services: state.services,
                     onServiceTap: (service) => _navigateToServiceDetail(service),

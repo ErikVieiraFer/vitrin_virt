@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/domain/value_objects/phone.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/tenant.dart';
+import '../../domain/entities/vitrine_section.dart';
 import 'theme_settings_model.dart';
 
 /// Modelo de dados para Tenant.
@@ -16,6 +17,7 @@ class TenantModel extends Equatable {
   final String logoUrl;
   final String whatsapp;
   final ThemeSettingsModel themeSettings;
+  final List<VitrineSection> sections;
 
   const TenantModel({
     required this.id,
@@ -24,6 +26,7 @@ class TenantModel extends Equatable {
     required this.logoUrl,
     required this.whatsapp,
     required this.themeSettings,
+    this.sections = const [],
   });
 
   /// Cria uma instância a partir de JSON do Firestore.
@@ -42,6 +45,15 @@ class TenantModel extends Equatable {
       final whatsapp = json['whatsapp'] as String?;
       final themeSettingsData = json['theme_settings'] ?? json['themeSettings'];
 
+      final sectionsRaw = json['sections'];
+      final sections = sectionsRaw is List
+          ? sectionsRaw
+              .whereType<Map>()
+              .map((e) => VitrineSection.fromJson(
+                  e.map((k, v) => MapEntry(k.toString(), v))))
+              .toList()
+          : <VitrineSection>[];
+
       return TenantModel(
         id: id,
         subdomain: subdomain ?? '',
@@ -52,6 +64,7 @@ class TenantModel extends Equatable {
             ? ThemeSettingsModel.fromJson(
                 themeSettingsData as Map<String, dynamic>)
             : ThemeSettingsModel.defaultSettings(),
+        sections: sections,
       );
     } catch (e, stackTrace) {
       AppLogger.error(
@@ -73,6 +86,7 @@ class TenantModel extends Equatable {
       logoUrl: entity.logoUrl,
       whatsapp: entity.whatsapp.value,
       themeSettings: ThemeSettingsModel.fromEntity(entity.themeSettings),
+      sections: entity.sections,
     );
   }
 
@@ -84,6 +98,7 @@ class TenantModel extends Equatable {
       'logo_url': logoUrl,
       'whatsapp': whatsapp,
       'theme_settings': themeSettings.toJson(),
+      'sections': sections.map((s) => s.toJson()).toList(),
     };
   }
 
@@ -96,6 +111,7 @@ class TenantModel extends Equatable {
       logoUrl: logoUrl,
       whatsapp: Phone(whatsapp),
       themeSettings: themeSettings.toEntity(),
+      sections: sections,
     );
   }
 
@@ -107,5 +123,6 @@ class TenantModel extends Equatable {
         logoUrl,
         whatsapp,
         themeSettings,
+        sections,
       ];
 }
