@@ -6,6 +6,7 @@ import { Bell, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useBookingNotifications } from '@/lib/hooks/use-booking-notifications';
+import { enablePushForTenant } from '@/lib/firebase/messaging';
 
 interface NotificationBellProps {
   tenantId?: string;
@@ -17,10 +18,33 @@ export function NotificationBell({ tenantId }: NotificationBellProps) {
   const { notifications, unreadCount, markAllRead, permission, requestPermission } =
     useBookingNotifications(tenantId);
 
+  const [pushBusy, setPushBusy] = useState(false);
+  const [pushMsg, setPushMsg] = useState<string | null>(null);
+
   const goToBookings = () => {
     markAllRead();
     setOpen(false);
     router.push('/dashboard/bookings');
+  };
+
+  // Ativa push em background (FCM). Se a VAPID ainda não estiver configurada,
+  // cai para o aviso in-app (foreground), que só depende da permissão.
+  const handleEnablePush = async () => {
+    if (!tenantId) return;
+    setPushBusy(true);
+    setPushMsg(null);
+    const res = await enablePushForTenant(tenantId);
+    if (res.ok) {
+      setPushMsg('Push ativado neste aparelho ✅');
+    } else if (res.reason === 'no-vapid' || res.reason === 'unsupported') {
+      await requestPermission();
+      setPushMsg('Avisos do navegador ativados (push em background pendente de configuração).');
+    } else if (res.reason === 'denied') {
+      setPushMsg('Permissão negada. Habilite nas configurações do navegador.');
+    } else {
+      setPushMsg('Não foi possível ativar agora. Tente novamente.');
+    }
+    setPushBusy(false);
   };
 
   return (
@@ -58,14 +82,20 @@ export function NotificationBell({ tenantId }: NotificationBellProps) {
               )}
             </div>
 
-            {permission === 'default' && (
+            {permission !== 'denied' && (
               <button
                 type="button"
-                onClick={requestPermission}
-                className="w-full border-b border-border bg-muted/50 px-4 py-2 text-left text-xs text-muted-foreground hover:bg-muted"
+                onClick={handleEnablePush}
+                disabled={pushBusy}
+                className="w-full border-b border-border bg-muted/50 px-4 py-2 text-left text-xs text-muted-foreground hover:bg-muted disabled:opacity-50"
               >
-                🔔 Ativar avisos do navegador para novos agendamentos
+                🔔 {pushBusy ? 'Ativando…' : 'Ativar notificações neste aparelho'}
               </button>
+            )}
+            {pushMsg && (
+              <p className="border-b border-border px-4 py-2 text-xs text-muted-foreground">
+                {pushMsg}
+              </p>
             )}
 
             <div className="max-h-80 overflow-y-auto">
