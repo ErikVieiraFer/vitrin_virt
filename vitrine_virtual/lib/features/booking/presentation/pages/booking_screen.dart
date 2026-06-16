@@ -171,6 +171,9 @@ class _BookingScreenState extends State<BookingScreen> {
     context.read<BookingCubit>().submitBooking(
           tenantId: widget.tenant.id,
           serviceId: widget.service.id,
+          serviceName: widget.service.name,
+          servicePrice: widget.service.price.inReais,
+          serviceDuration: widget.service.durationMinutes,
           customerName: _nameController.text,
           customerPhone: _phoneController.text,
           bookingDate: _selectedDate!,

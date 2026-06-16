@@ -190,5 +190,4 @@ A migração é **idempotente**: rodar de novo em dados já canônicos não faz 
 > Um campo, um nome, um lugar. Se precisar de um campo novo, adicione-o **aqui** com o nome
 > em `camelCase`, atualize os `mappers.ts` dos dois painéis e o `*_model.dart` do Flutter no
 > mesmo PR.
-</content>
 </invoke>

@@ -108,4 +108,3 @@ export function mapAvailability(id: string, data: Raw): Availability {
     updatedAt: toDate(pick(data, 'updatedAt', 'updated_at')),
   };
 }
-</content>

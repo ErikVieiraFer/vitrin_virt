@@ -109,6 +109,54 @@ function planTenant(data) {
   return changed ? patch : null;
 }
 
+/**
+ * Carrega services num mapa id -> { name, price, duration } (tolerando legado),
+ * para backfill dos campos denormalizados nos bookings antigos.
+ */
+async function loadServiceMap() {
+  const db = admin.firestore();
+  const snap = await db.collection('services').get();
+  const map = new Map();
+  for (const doc of snap.docs) {
+    const d = doc.data();
+    map.set(doc.id, {
+      name: d.name ?? '',
+      price: Number(d.price ?? 0),
+      duration: Number(d.duration ?? d.duration_minutes ?? 0),
+    });
+  }
+  return map;
+}
+
+/** Booking: rename snake->camel + backfill serviceName/servicePrice/serviceDuration. */
+function planBooking(data, serviceMap) {
+  const patch =
+    planRename(
+      data,
+      [
+        ['tenant_id', 'tenantId'],
+        ['service_id', 'serviceId'],
+        ['customer_name', 'customerName'],
+        ['customer_phone', 'customerPhone'],
+        ['booking_date', 'bookingDate'],
+        ['booking_time', 'bookingTime'],
+        ['created_at', 'createdAt'],
+      ],
+      { addUpdatedAt: true }
+    ) ?? {};
+
+  // Backfill denormalizado se ausente e houver serviço correspondente.
+  const serviceId = data.serviceId ?? data.service_id;
+  const svc = serviceId ? serviceMap.get(serviceId) : undefined;
+  if (svc) {
+    if (data.serviceName === undefined && svc.name) patch.serviceName = svc.name;
+    if (data.servicePrice === undefined) patch.servicePrice = svc.price;
+    if (data.serviceDuration === undefined) patch.serviceDuration = svc.duration;
+  }
+
+  return Object.keys(patch).length ? patch : null;
+}
+
 async function migrateCollection(name, planner) {
   const db = admin.firestore();
   const snap = await db.collection(name).get();
@@ -158,21 +206,8 @@ async function main() {
       { addUpdatedAt: true }
     )
   );
-  total += await migrateCollection('bookings', (d) =>
-    planRename(
-      d,
-      [
-        ['tenant_id', 'tenantId'],
-        ['service_id', 'serviceId'],
-        ['customer_name', 'customerName'],
-        ['customer_phone', 'customerPhone'],
-        ['booking_date', 'bookingDate'],
-        ['booking_time', 'bookingTime'],
-        ['created_at', 'createdAt'],
-      ],
-      { addUpdatedAt: true }
-    )
-  );
+  const serviceMap = await loadServiceMap();
+  total += await migrateCollection('bookings', (d) => planBooking(d, serviceMap));
   total += await migrateCollection('availability', (d) =>
     planRename(d, [
       ['tenant_id', 'tenantId'],
@@ -193,4 +228,3 @@ main().catch((err) => {
   console.error('Falha na migração:', err);
   process.exit(1);
 });
-</content>

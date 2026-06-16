@@ -65,4 +65,3 @@ export function normalizeBooking(id: string, data: Raw): MasterBookingRow {
 export function tenantCreatedAt(data: Raw): Date {
   return toDate(pick(data, 'createdAt', 'created_at'));
 }
-</content>

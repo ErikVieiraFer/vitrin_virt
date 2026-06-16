@@ -104,9 +104,11 @@ export async function getTenantStats(tenantId: string): Promise<TenantStats> {
       active_services: activeServices,
       total_bookings: bookings.length,
       bookings_this_month: bookingsThisMonth,
-      last_booking_date: lastBookingDate
+      // cast: admin SDK Timestamp vs client SDK Timestamp (nominalmente distintos,
+      // mas ambos expõem .toDate()); o tipo TenantStats usa o do client SDK.
+      last_booking_date: (lastBookingDate
         ? admin.firestore.Timestamp.fromDate(lastBookingDate)
-        : undefined,
+        : undefined) as TenantStats['last_booking_date'],
     };
   } catch (error) {
     console.error('Error getting tenant stats:', error);

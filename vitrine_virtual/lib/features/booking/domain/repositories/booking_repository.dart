@@ -15,6 +15,9 @@ abstract class BookingRepository {
   Future<Either<Failure, Booking>> createBooking({
     required String tenantId,
     required String serviceId,
+    required String serviceName,
+    required double servicePrice,
+    required int serviceDuration,
     required String customerName,
     required String customerPhone,
     required DateTime bookingDate,
