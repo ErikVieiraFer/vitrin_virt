@@ -2,6 +2,7 @@
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/lib/hooks/use-auth';
+import { NotificationBell } from '@/components/notification-bell';
 
 interface HeaderProps {
   breadcrumbs?: string[];
@@ -32,6 +33,7 @@ export function Header({ breadcrumbs = [] }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-3">
+        <NotificationBell tenantId={tenant?.id} />
         <div className="text-right">
           <p className="text-sm font-medium">{tenant?.name || 'Carregando...'}</p>
           <p className="text-xs text-muted-foreground">{user?.email}</p>
