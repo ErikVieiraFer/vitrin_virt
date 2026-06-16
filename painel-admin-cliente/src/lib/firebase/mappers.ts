@@ -12,6 +12,7 @@ import type { Tenant, ThemeSettings } from '@/types/tenant';
 import type { Service } from '@/types/service';
 import type { Booking, BookingStatus } from '@/types/booking';
 import type { Availability } from '@/types/availability';
+import type { VitrineSection } from '@/types/section';
 
 type Raw = Record<string, unknown>;
 
@@ -54,6 +55,7 @@ export function mapTenant(id: string, data: Raw): Tenant {
     whatsapp: pick<string>(data, 'whatsapp'),
     active: (pick<boolean>(data, 'active') ?? true),
     themeSettings: mapThemeSettings(pick(data, 'themeSettings', 'theme')),
+    sections: (pick<VitrineSection[]>(data, 'sections') ?? []),
     createdAt: toDate(pick(data, 'createdAt', 'created_at')),
     updatedAt: toDate(pick(data, 'updatedAt', 'updated_at')),
   };

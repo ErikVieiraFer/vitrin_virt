@@ -49,7 +49,12 @@ quebra silenciosamente features multi-app. Estado real encontrado no código (an
     "fontFamily": "string",         // ex: "Inter"
     "logoUrl": "string | null"
   },
-  "sections": [],                   // reservado p/ editor visual (Tarefa 2) — array vazio por ora
+  "sections": [                     // editor visual — seções da vitrine (camelCase)
+    // { "id": "hero-...", "type": "hero",    "order": 0, "data": { "title", "subtitle", "imageUrl", "ctaText" } },
+    // { "id": "text-...", "type": "text",    "order": 1, "data": { "heading", "body" } },
+    // { "id": "gal-...",  "type": "gallery", "order": 2, "data": { "images": ["url"] } },
+    // { "id": "srv-...",  "type": "services","order": 3, "data": { "showPrices": true } }
+  ],
   "createdAt": "Timestamp",
   "updatedAt": "Timestamp"
 }

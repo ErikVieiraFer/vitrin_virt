@@ -1,3 +1,5 @@
+import type { VitrineSection } from './section';
+
 export interface ThemeSettings {
   primaryColor: string;
   secondaryColor: string;
@@ -14,6 +16,7 @@ export interface Tenant {
   createdAt: Date;
   updatedAt: Date;
   themeSettings: ThemeSettings;
+  sections: VitrineSection[];
   active: boolean;
 }
 
@@ -29,4 +32,5 @@ export interface UpdateTenantData {
   name?: string;
   whatsapp?: string;
   themeSettings?: ThemeSettings;
+  sections?: VitrineSection[];
 }
