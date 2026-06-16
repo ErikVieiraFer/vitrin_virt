@@ -22,10 +22,12 @@ class FirebaseConstants {
   static const String isActiveField = 'active';
   static const String createdAtField = 'createdAt';
 
-  static const String customerNameField = 'customer_name';
-  static const String customerPhoneField = 'customer_phone';
-  static const String bookingDateField = 'booking_date';
-  static const String bookingTimeField = 'booking_time';
+  static const String customerNameField = 'customerName';
+  static const String customerPhoneField = 'customerPhone';
+  // Devem casar com booking_model.toJson (schema canônico camelCase, ver /SCHEMA.md).
+  // Se divergirem do writer, a checagem de slot não acha o agendamento e permite overbooking.
+  static const String bookingDateField = 'bookingDate';
+  static const String bookingTimeField = 'bookingTime';
   static const String statusField = 'status';
 
   static const String dayOfWeekField = 'day_of_week';

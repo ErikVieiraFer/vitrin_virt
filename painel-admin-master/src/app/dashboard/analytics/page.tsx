@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
+import { toDate, pick } from '@/lib/firebase/mappers';
 import { StatsCard } from '@/components/stats-card';
 import { AnalyticsChart } from '@/components/analytics-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,24 +35,23 @@ export default function AnalyticsPage() {
         setTotalTenants(tenantsSnap.size);
         setTotalBookings(bookingsSnap.size);
 
-        // Agrupa bookings por mês
+        // Agrupa bookings por mês (tolera bookingDate/booking_date/date). Ver /SCHEMA.md.
         const bookingsByMonth: Record<number, number> = {};
         bookingsSnap.docs.forEach(doc => {
-          const data = doc.data();
-          const dateStr = data.bookingDate as string | undefined;
-          if (dateStr) {
-            const month = new Date(dateStr).getMonth();
+          const raw = doc.data();
+          const date = toDate(pick(raw, 'bookingDate', 'booking_date', 'date'));
+          if (date.getTime() > 0) {
+            const month = date.getMonth();
             bookingsByMonth[month] = (bookingsByMonth[month] ?? 0) + 1;
           }
         });
 
-        // Agrupa tenants por mês de criação
+        // Agrupa tenants por mês de criação (tolera createdAt/created_at)
         const tenantsByMonth: Record<number, number> = {};
         tenantsSnap.docs.forEach(doc => {
-          const data = doc.data();
-          const ts = data.createdAt;
-          if (ts?.toDate) {
-            const month = ts.toDate().getMonth();
+          const date = toDate(pick(doc.data(), 'createdAt', 'created_at'));
+          if (date.getTime() > 0) {
+            const month = date.getMonth();
             tenantsByMonth[month] = (tenantsByMonth[month] ?? 0) + 1;
           }
         });

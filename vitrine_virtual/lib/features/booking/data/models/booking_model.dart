@@ -41,10 +41,10 @@ class BookingModel extends Equatable {
       serviceId: (json['service_id'] ?? json['serviceId']) as String,
       customerName: (json['customer_name'] ?? json['customerName']) as String,
       customerPhone: (json['customer_phone'] ?? json['customerPhone']) as String,
-      bookingDate: (json['booking_date'] as Timestamp).toDate(),
+      bookingDate: ((json['booking_date'] ?? json['bookingDate']) as Timestamp).toDate(),
       bookingTime: (json['booking_time'] ?? json['bookingTime']) as String,
       status: json['status'] as String,
-      createdAt: (json['created_at'] as Timestamp).toDate(),
+      createdAt: ((json['created_at'] ?? json['createdAt']) as Timestamp).toDate(),
     );
   }
 
@@ -64,16 +64,20 @@ class BookingModel extends Equatable {
   }
 
   /// Converte para JSON para persistência.
+  ///
+  /// Emite o schema canônico em camelCase (ver /SCHEMA.md). A leitura (`fromJson`)
+  /// mantém fallback snake_case para dados legados até a migração rodar.
   Map<String, dynamic> toJson() {
     return {
-      'tenant_id': tenantId,
-      'service_id': serviceId,
-      'customer_name': customerName,
-      'customer_phone': customerPhone,
-      'booking_date': Timestamp.fromDate(bookingDate),
-      'booking_time': bookingTime,
+      'tenantId': tenantId,
+      'serviceId': serviceId,
+      'customerName': customerName,
+      'customerPhone': customerPhone,
+      'bookingDate': Timestamp.fromDate(bookingDate),
+      'bookingTime': bookingTime,
       'status': status,
-      'created_at': Timestamp.fromDate(createdAt),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(createdAt),
     };
   }
 
