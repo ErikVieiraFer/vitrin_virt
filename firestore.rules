@@ -1,0 +1,48 @@
+rules_version = '2';
+
+// Regras do Firestore — Vitrine Virtual.
+// Versionadas aqui para revisão; faça deploy via `firebase deploy --only firestore:rules`
+// ou colando no Firebase Console > Firestore > Regras.
+//
+// NOTA: as condições usam `resource.data.tenantId` (camelCase canônico, ver /SCHEMA.md).
+// Documentos legados em snake_case (`tenant_id`) NÃO satisfazem estas regras — rode
+// `scripts/migrate-schema.mjs --apply` antes/junto do deploy.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /tenants/{tenantId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.ownerUid;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && request.auth.uid == resource.data.ownerUid;
+    }
+
+    match /services/{serviceId} {
+      allow read, write: if request.auth != null &&
+        exists(/databases/$(database)/documents/tenants/$(resource.data.tenantId)) &&
+        get(/databases/$(database)/documents/tenants/$(resource.data.tenantId)).data.ownerUid == request.auth.uid;
+    }
+
+    match /availability/{availabilityId} {
+      allow read, write: if request.auth != null &&
+        exists(/databases/$(database)/documents/tenants/$(resource.data.tenantId)) &&
+        get(/databases/$(database)/documents/tenants/$(resource.data.tenantId)).data.ownerUid == request.auth.uid;
+    }
+
+    match /bookings/{bookingId} {
+      // Leitura pelo dono do tenant.
+      allow read: if request.auth != null &&
+        exists(/databases/$(database)/documents/tenants/$(resource.data.tenantId)) &&
+        get(/databases/$(database)/documents/tenants/$(resource.data.tenantId)).data.ownerUid == request.auth.uid;
+
+      // Criação pública (app de agendamento Flutter).
+      allow create: if true;
+
+      // NOVO: o dono do tenant pode atualizar (status/nota interna), mas não mudar de tenant.
+      allow update: if request.auth != null &&
+        exists(/databases/$(database)/documents/tenants/$(resource.data.tenantId)) &&
+        get(/databases/$(database)/documents/tenants/$(resource.data.tenantId)).data.ownerUid == request.auth.uid &&
+        request.resource.data.tenantId == resource.data.tenantId;
+    }
+  }
+}

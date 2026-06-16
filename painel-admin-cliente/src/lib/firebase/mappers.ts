@@ -94,6 +94,7 @@ export function mapBooking(id: string, data: Raw): Booking {
     duration: (pick<number>(data, 'serviceDuration', 'duration') ?? 0),
     price: (pick<number>(data, 'servicePrice', 'price') ?? 0),
     status: (pick<BookingStatus>(data, 'status') ?? 'pending'),
+    notes: pick<string>(data, 'notes'),
     createdAt: toDate(pick(data, 'createdAt', 'created_at')),
     updatedAt: toDate(pick(data, 'updatedAt', 'updated_at')),
   };

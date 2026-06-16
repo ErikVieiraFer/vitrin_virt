@@ -15,7 +15,7 @@ import { db } from './config';
 import type { Tenant, CreateTenantData, UpdateTenantData } from '@/types/tenant';
 import type { Service, CreateServiceData, UpdateServiceData } from '@/types/service';
 import type { Availability } from '@/types/availability';
-import type { Booking } from '@/types/booking';
+import type { Booking, BookingStatus } from '@/types/booking';
 import {
   mapTenant,
   mapService,
@@ -192,4 +192,24 @@ export const getBookingsByTenantId = async (
   }
 
   return bookings;
+};
+
+// Atualiza o status de um agendamento (pending/confirmed/cancelled/completed).
+// Grava no schema canônico (ver /SCHEMA.md). Requer regra de update em bookings.
+export const updateBookingStatus = async (
+  id: string,
+  status: BookingStatus
+): Promise<void> => {
+  await updateDoc(doc(db, 'bookings', id), {
+    status,
+    updatedAt: Timestamp.now(),
+  });
+};
+
+// Atualiza a nota interna do dono sobre um agendamento.
+export const updateBookingNotes = async (id: string, notes: string): Promise<void> => {
+  await updateDoc(doc(db, 'bookings', id), {
+    notes,
+    updatedAt: Timestamp.now(),
+  });
 };
