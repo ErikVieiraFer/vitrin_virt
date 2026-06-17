@@ -48,7 +48,7 @@ export function Hero() {
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </a>
               <a
-                href="https://demo.vitrinevirt.com"
+                href="https://demo.vitrinevirt.com/#/home"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-8 py-4 text-lg font-medium text-white backdrop-blur transition-all hover:bg-white/10"

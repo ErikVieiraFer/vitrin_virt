@@ -300,7 +300,7 @@ export const footer = {
     support: [
       { label: 'Falar no WhatsApp', href: 'https://wa.me/5527998547188' },
       { label: 'Entrar no painel', href: 'https://painel.vitrinevirt.com/login' },
-      { label: 'Ver demonstração', href: 'https://demo.vitrinevirt.com' },
+      { label: 'Ver demonstração', href: 'https://demo.vitrinevirt.com/#/home' },
     ],
   },
   copyright: '© 2025 Vitrine Virtual. Todos os direitos reservados.',
