@@ -387,6 +387,47 @@ export async function getGlobalStats(): Promise<GlobalStats> {
   }
 }
 
+export interface AdminAnalytics {
+  totalTenants: number;
+  totalBookings: number;
+  monthly: Array<{ month: number; bookings: number; newTenants: number }>;
+}
+
+/**
+ * Agregações para a tela de Analytics (via Admin SDK, tolerando schema legado).
+ * Ver /SCHEMA.md. Roteado por API porque as regras restringem leitura ao dono.
+ */
+export async function getAnalytics(): Promise<AdminAnalytics> {
+  const [tenantsSnap, bookingsSnap] = await Promise.all([
+    adminDb.collection('tenants').get(),
+    adminDb.collection('bookings').get(),
+  ]);
+
+  const monthly = Array.from({ length: 12 }, (_, i) => ({
+    month: i,
+    bookings: 0,
+    newTenants: 0,
+  }));
+
+  tenantsSnap.docs.forEach((d) => {
+    const dt = toDate(pick(d.data() as Raw, 'createdAt', 'created_at'));
+    if (dt.getTime() > 0) monthly[dt.getMonth()].newTenants += 1;
+  });
+
+  bookingsSnap.docs.forEach((d) => {
+    const dt = toDate(
+      pick(d.data() as Raw, 'bookingDate', 'booking_date', 'date', 'createdAt', 'created_at')
+    );
+    if (dt.getTime() > 0) monthly[dt.getMonth()].bookings += 1;
+  });
+
+  return {
+    totalTenants: tenantsSnap.size,
+    totalBookings: bookingsSnap.size,
+    monthly,
+  };
+}
+
 /**
  * Check if subdomain is available
  */

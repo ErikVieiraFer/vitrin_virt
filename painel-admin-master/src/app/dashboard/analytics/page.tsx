@@ -1,14 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { collection, query, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
-import { toDate, pick } from '@/lib/firebase/mappers';
+import { authedFetch } from '@/lib/api';
 import { StatsCard } from '@/components/stats-card';
 import { AnalyticsChart } from '@/components/analytics-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, Users, Calendar } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
+import { TrendingUp, Users, Calendar, Loader2 } from 'lucide-react';
 
 interface MonthData {
   name: string;
@@ -25,52 +22,30 @@ export default function AnalyticsPage() {
   const [monthlyData, setMonthlyData] = useState<MonthData[]>([]);
 
   useEffect(() => {
-    async function fetchData() {
+    (async () => {
       try {
-        const [tenantsSnap, bookingsSnap] = await Promise.all([
-          getDocs(query(collection(db, 'tenants'))),
-          getDocs(query(collection(db, 'bookings'))),
-        ]);
+        const res = await authedFetch('/api/admin/analytics');
+        if (!res.ok) throw new Error('Falha ao carregar analytics');
+        const data = await res.json();
 
-        setTotalTenants(tenantsSnap.size);
-        setTotalBookings(bookingsSnap.size);
+        setTotalTenants(data.totalTenants ?? 0);
+        setTotalBookings(data.totalBookings ?? 0);
 
-        // Agrupa bookings por mês (tolera bookingDate/booking_date/date). Ver /SCHEMA.md.
-        const bookingsByMonth: Record<number, number> = {};
-        bookingsSnap.docs.forEach(doc => {
-          const raw = doc.data();
-          const date = toDate(pick(raw, 'bookingDate', 'booking_date', 'date'));
-          if (date.getTime() > 0) {
-            const month = date.getMonth();
-            bookingsByMonth[month] = (bookingsByMonth[month] ?? 0) + 1;
-          }
-        });
-
-        // Agrupa tenants por mês de criação (tolera createdAt/created_at)
-        const tenantsByMonth: Record<number, number> = {};
-        tenantsSnap.docs.forEach(doc => {
-          const date = toDate(pick(doc.data(), 'createdAt', 'created_at'));
-          if (date.getTime() > 0) {
-            const month = date.getMonth();
-            tenantsByMonth[month] = (tenantsByMonth[month] ?? 0) + 1;
-          }
-        });
-
-        const data: MonthData[] = MONTHS.map((name, i) => ({
-          name,
-          bookings: bookingsByMonth[i] ?? 0,
-          newTenants: tenantsByMonth[i] ?? 0,
-        }));
-
-        setMonthlyData(data);
+        const monthly: Array<{ month: number; bookings: number; newTenants: number }> =
+          data.monthly ?? [];
+        setMonthlyData(
+          monthly.map((m) => ({
+            name: MONTHS[m.month] ?? String(m.month),
+            bookings: m.bookings,
+            newTenants: m.newTenants,
+          }))
+        );
       } catch (err) {
         console.error('Error fetching analytics:', err);
       } finally {
         setLoading(false);
       }
-    }
-
-    fetchData();
+    })();
   }, []);
 
   if (loading) {
@@ -88,7 +63,11 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatsCard title="Total de Clientes" value={String(totalTenants)} icon={Users} />
         <StatsCard title="Total de Agendamentos" value={String(totalBookings)} icon={Calendar} />
-        <StatsCard title="Média Agend./Cliente" value={totalTenants ? (totalBookings / totalTenants).toFixed(1) : '0'} icon={TrendingUp} />
+        <StatsCard
+          title="Média Agend./Cliente"
+          value={totalTenants ? (totalBookings / totalTenants).toFixed(1) : '0'}
+          icon={TrendingUp}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
