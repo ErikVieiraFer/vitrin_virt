@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Poppins } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({
@@ -8,18 +8,26 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
+  display: 'swap',
+  variable: '--font-poppins',
+});
+
 export const metadata: Metadata = {
-  title: 'Vitrine Virtual - Agendamentos Profissionais para Seu Negócio',
+  metadataBase: new URL('https://vitrinevirt.com'),
+  title: 'Vitrine Virtual — Agenda cheia, sem responder WhatsApp o dia todo',
   description:
-    'Plataforma completa de agendamentos personalizada para sua marca. Configure em minutos, agende em segundos. Transforme visitantes em clientes com uma experiência profissional.',
+    'Sua barbearia, salão, estúdio ou clínica com um link profissional onde os clientes agendam sozinhos, 24h. Lembretes automáticos no WhatsApp reduzem faltas. Configure em 5 minutos.',
   keywords: [
     'agendamento online',
-    'agenda virtual',
+    'agenda para barbearia',
+    'agendamento salão de beleza',
     'sistema de agendamento',
     'vitrine virtual',
-    'agendamento profissional',
-    'calendario online',
-    'reservas online',
+    'agenda online whatsapp',
+    'link de agendamento',
   ],
   authors: [{ name: 'Vitrine Virtual' }],
   creator: 'Vitrine Virtual',
@@ -36,10 +44,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://vitrinevirtual.com',
-    title: 'Vitrine Virtual - Agendamentos Profissionais para Seu Negócio',
+    url: 'https://vitrinevirt.com',
+    title: 'Vitrine Virtual — Agenda cheia, sem responder WhatsApp o dia todo',
     description:
-      'Plataforma completa de agendamentos personalizada para sua marca. Configure em minutos, agende em segundos.',
+      'Seus clientes agendam sozinhos pelo seu link, 24h. Lembretes automáticos reduzem faltas. Configure em 5 minutos, sem cartão.',
     siteName: 'Vitrine Virtual',
     images: [
       {
@@ -52,17 +60,17 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Vitrine Virtual - Agendamentos Profissionais',
+    title: 'Vitrine Virtual — Agenda cheia, sem responder WhatsApp',
     description:
-      'Plataforma completa de agendamentos personalizada para sua marca. Configure em minutos, agende em segundos.',
+      'Seus clientes agendam sozinhos pelo seu link, 24h. Lembretes automáticos reduzem faltas.',
     images: ['/og-image.png'],
-    creator: '@vitrinevirtual',
+    creator: '@vitrinevirtofc',
   },
   verification: {
     google: 'google-site-verification-code',
   },
   alternates: {
-    canonical: 'https://vitrinevirtual.com',
+    canonical: 'https://vitrinevirt.com',
   },
 };
 
@@ -72,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={inter.variable}>
+    <html lang="pt-BR" className={`${inter.variable} ${poppins.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>

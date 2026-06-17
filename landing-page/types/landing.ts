@@ -47,3 +47,14 @@ export interface FAQ {
   question: string;
   answer: string;
 }
+
+export interface Metric {
+  value: string;
+  label: string;
+}
+
+export interface Integration {
+  icon: string;
+  name: string;
+  description: string;
+}

@@ -1,45 +1,78 @@
-import { Feature, Step, Benefit, Testimonial, PricingPlan, FAQ } from '@/types/landing';
+import {
+  Feature,
+  Step,
+  Benefit,
+  Testimonial,
+  PricingPlan,
+  FAQ,
+  Metric,
+  Integration,
+} from '@/types/landing';
 
 export const hero = {
-  badge: '🚀 Lançamento 2025',
-  title: 'Transforme seu negócio em uma vitrine virtual profissional',
+  badge: 'Sem cartão de crédito • Pronto em 5 minutos',
+  title: 'Agenda cheia, sem responder WhatsApp o dia todo',
   subtitle:
-    'Plataforma completa de agendamentos personalizada para sua marca. Configure em minutos, agende em segundos.',
-  ctaPrimary: 'Começar Grátis',
-  ctaSecondary: 'Ver Demo',
-  socialProof: '✨ Mais de 100+ negócios confiam em nós',
+    'Seus clientes agendam sozinhos pelo seu link personalizado, 24 horas por dia. Você recebe tudo organizado e manda lembrete automático pra ninguém furar horário.',
+  ctaPrimary: 'Criar minha vitrine grátis',
+  ctaSecondary: 'Ver demonstração',
+  proofs: ['Pronto em 5 minutos', 'Sem cartão de crédito', 'Cancele quando quiser'],
 };
+
+export const niches: string[] = [
+  'Barbearias',
+  'Salões de beleza',
+  'Estúdios de tattoo',
+  'Clínicas',
+  'Manicures & nail designers',
+  'Esteticistas',
+  'Personal trainers',
+  'Fotógrafos',
+];
+
+export const metrics: Metric[] = [
+  { value: '−80%', label: 'menos faltas com lembretes automáticos' },
+  { value: '24h', label: 'recebendo agendamentos, sem você responder' },
+  { value: '5 min', label: 'pra configurar e publicar seu link' },
+  { value: '+100', label: 'negócios já confiam na Vitrine Virtual' },
+];
 
 export const features: Feature[] = [
   {
     icon: 'Calendar',
-    title: 'Agendamento Inteligente',
-    description: 'Sistema de horários com disponibilidade em tempo real e confirmações automáticas',
-  },
-  {
-    icon: 'Palette',
-    title: '100% Personalizável',
-    description: 'Cores, logo e fonte da sua marca. Crie uma experiência única para seus clientes',
-  },
-  {
-    icon: 'Smartphone',
-    title: 'Multiplataforma',
-    description: 'Web e mobile com um único código. Seus clientes agendam de qualquer dispositivo',
+    title: 'Sua agenda no piloto automático',
+    description:
+      'Os clientes veem só os horários livres e agendam em 3 toques. Acabaram os conflitos e o vai-e-volta de mensagem.',
   },
   {
     icon: 'MessageCircle',
-    title: 'Integração WhatsApp',
-    description: 'Confirmações e lembretes automáticos via WhatsApp para reduzir não-comparecimentos',
+    title: 'Lembretes que evitam o furo',
+    description:
+      'Confirmação na hora e lembrete automático no WhatsApp antes do horário. Menos faltas, mais faturamento.',
+  },
+  {
+    icon: 'Palette',
+    title: 'Com a cara da sua marca',
+    description:
+      'Suas cores, sua logo e suas fotos. Uma vitrine que transmite o profissionalismo do seu negócio.',
+  },
+  {
+    icon: 'Smartphone',
+    title: 'Funciona em qualquer celular',
+    description:
+      'Seus clientes agendam do celular, sem instalar nada. Você gerencia de onde estiver.',
   },
   {
     icon: 'BarChart3',
-    title: 'Dashboard Completo',
-    description: 'Gerencie agendamentos, clientes e relatórios em um painel intuitivo',
+    title: 'Você no controle',
+    description:
+      'Veja agendamentos do dia, confirme, cancele e acompanhe seu movimento num painel simples.',
   },
   {
     icon: 'Zap',
-    title: 'Super Rápido',
-    description: 'Configure sua vitrine virtual em menos de 5 minutos e comece a receber agendamentos',
+    title: 'No ar em minutos',
+    description:
+      'Crie a conta, adicione seus serviços e compartilhe o link. Em 5 minutos você já recebe agendamento.',
   },
 ];
 
@@ -47,20 +80,43 @@ export const steps: Step[] = [
   {
     number: 1,
     icon: 'UserPlus',
-    title: 'Cadastre-se',
-    description: 'Crie sua conta gratuitamente em segundos. Sem cartão de crédito necessário.',
+    title: 'Crie sua conta',
+    description: 'De graça, em segundos. Sem cartão de crédito, sem burocracia.',
   },
   {
     number: 2,
     icon: 'Settings',
-    title: 'Configure',
-    description: 'Adicione seus serviços, defina horários e personalize com as cores da sua marca.',
+    title: 'Monte sua vitrine',
+    description: 'Adicione serviços, defina seus horários e deixe com a cara da sua marca.',
   },
   {
     number: 3,
     icon: 'Share2',
-    title: 'Compartilhe',
-    description: 'Compartilhe seu link personalizado e comece a receber agendamentos imediatamente.',
+    title: 'Compartilhe o link',
+    description: 'Coloque na bio do Instagram e no status do WhatsApp. Pronto: a agenda começa a encher.',
+  },
+];
+
+export const integrations: Integration[] = [
+  {
+    icon: 'MessageCircle',
+    name: 'WhatsApp',
+    description: 'Confirmações e lembretes automáticos pra reduzir faltas.',
+  },
+  {
+    icon: 'CalendarCheck',
+    name: 'Google Agenda',
+    description: 'Seus compromissos sincronizados, sem digitar duas vezes.',
+  },
+  {
+    icon: 'QrCode',
+    name: 'Link & QR Code',
+    description: 'Um link na bio e um QR Code na recepção. Agendar fica fácil.',
+  },
+  {
+    icon: 'Banknote',
+    name: 'Pagamentos (em breve)',
+    description: 'Cobre um sinal no agendamento e reduza o no-show de vez.',
   },
 ];
 
@@ -73,7 +129,7 @@ export const benefits: Benefit[] = [
       'Link profissional personalizado com sua marca',
       'Disponibilidade em tempo real evita conflitos',
       'Processo de agendamento simplificado em 3 cliques',
-      'Integração com calendário e lembretes automáticos',
+      'Lembretes automáticos no WhatsApp',
     ],
     image: '/images/benefit-1.png',
     reverse: false,
@@ -86,23 +142,10 @@ export const benefits: Benefit[] = [
       'Elimine ligações e mensagens para agendar',
       'Confirmações e lembretes automáticos via WhatsApp',
       'Gestão centralizada de todos os agendamentos',
-      'Relatórios e analytics para otimizar seu negócio',
+      'Relatórios para otimizar seu negócio',
     ],
     image: '/images/benefit-2.png',
     reverse: true,
-  },
-  {
-    title: 'Destaque-se da concorrência',
-    description:
-      'Ofereça uma experiência premium que seus concorrentes não têm e conquiste mais clientes.',
-    items: [
-      'Visual profissional que transmite confiança',
-      'Sua marca em destaque em todos os pontos de contato',
-      'Experiência mobile-first para clientes modernos',
-      'Diferenciais que justificam preços premium',
-    ],
-    image: '/images/benefit-3.png',
-    reverse: false,
   },
 ];
 
@@ -113,7 +156,7 @@ export const testimonials: Testimonial[] = [
     role: 'Proprietário',
     company: 'Barbearia Top',
     content:
-      'Aumentei meus agendamentos em 300% no primeiro mês! A plataforma é incrivelmente fácil de usar e meus clientes adoram.',
+      'Parei de perder horário trocando mensagem. O cliente agenda sozinho e ainda recebe o lembrete. Minha agenda nunca esteve tão cheia.',
     image: '/images/testimonials/avatar-1.jpg',
     rating: 5,
   },
@@ -123,48 +166,18 @@ export const testimonials: Testimonial[] = [
     role: 'Esteticista',
     company: 'Clínica Beleza & Bem-Estar',
     content:
-      'Antes eu perdia horas organizando agendamentos. Agora tudo é automático e profissional. Melhor investimento que fiz!',
+      'Antes eu perdia horas organizando agendamento. Agora é tudo automático e profissional. Melhor decisão que tomei pro meu negócio.',
     image: '/images/testimonials/avatar-2.jpg',
     rating: 5,
   },
   {
     id: 3,
-    name: 'Pedro Costa',
-    role: 'Personal Trainer',
-    company: 'Fitness Pro',
-    content:
-      'Meus alunos conseguem agendar treinos a qualquer hora. Reduzi faltas em 80% com os lembretes automáticos.',
-    image: '/images/testimonials/avatar-3.jpg',
-    rating: 5,
-  },
-  {
-    id: 4,
-    name: 'Ana Oliveira',
-    role: 'Dentista',
-    company: 'Odonto Sorriso',
-    content:
-      'Interface linda e profissional! Meus pacientes elogiam a facilidade de agendar consultas. Recomendo muito!',
-    image: '/images/testimonials/avatar-4.jpg',
-    rating: 5,
-  },
-  {
-    id: 5,
-    name: 'Carlos Ferreira',
-    role: 'Fotógrafo',
-    company: 'CF Fotografia',
-    content:
-      'A personalização é fantástica! Consegui deixar tudo com a cara da minha marca. Clientes impressionados.',
-    image: '/images/testimonials/avatar-5.jpg',
-    rating: 5,
-  },
-  {
-    id: 6,
     name: 'Juliana Rocha',
-    role: 'Manicure',
+    role: 'Nail Designer',
     company: 'Studio Unhas Perfeitas',
     content:
-      'Simples, rápido e eficiente. Configure em minutos e já estava recebendo agendamentos. Perfeito para pequenos negócios!',
-    image: '/images/testimonials/avatar-6.jpg',
+      'Simples e rápido. Configurei em minutos e no mesmo dia já estava recebendo agendamento pela bio do Instagram.',
+    image: '/images/testimonials/avatar-3.jpg',
     rating: 5,
   },
 ];
@@ -174,7 +187,7 @@ export const pricingPlans: PricingPlan[] = [
     name: 'Basic',
     price: 0,
     priceYearly: 0,
-    description: 'Perfeito para começar',
+    description: 'Pra começar agora mesmo',
     features: [
       'Até 3 serviços',
       '20 agendamentos/mês',
@@ -190,13 +203,13 @@ export const pricingPlans: PricingPlan[] = [
     priceYearly: 879.9,
     priceOriginal: 199.9,
     priceYearlyOriginal: 2000,
-    description: 'Para negócios em crescimento',
+    description: 'Pra encher a agenda de vez',
     features: [
       'Serviços ilimitados',
       'Agendamentos ilimitados',
       'Temas personalizados',
       'Suporte prioritário',
-      'Integração WhatsApp',
+      'Lembretes automáticos no WhatsApp',
       'Relatórios completos',
       'Sem marca Vitrine Virtual',
     ],
@@ -207,7 +220,7 @@ export const pricingPlans: PricingPlan[] = [
     name: 'Enterprise',
     price: 150,
     priceYearly: 1800,
-    description: 'Para equipes e clínicas',
+    description: 'Pra equipes e clínicas',
     features: [
       'Tudo do Pro +',
       'White label completo',
@@ -223,79 +236,71 @@ export const pricingPlans: PricingPlan[] = [
 
 export const faqs: FAQ[] = [
   {
-    question: 'Como funciona o período gratuito?',
+    question: 'Quanto tempo leva pra colocar no ar?',
     answer:
-      'O plano Basic é 100% gratuito para sempre! Você pode começar agora sem precisar de cartão de crédito e fazer upgrade quando seu negócio crescer.',
+      'Cerca de 5 minutos. Você cria a conta, adiciona seus serviços e horários, e já recebe um link pronto pra compartilhar. Sem instalação e sem conhecimento técnico.',
   },
   {
-    question: 'Posso cancelar a qualquer momento?',
+    question: 'É de graça mesmo?',
     answer:
-      'Sim! Não há contratos de longo prazo. Você pode cancelar sua assinatura a qualquer momento diretamente no painel, sem burocracias.',
+      'Sim! O plano Basic é gratuito pra sempre, sem cartão de crédito. Você só faz upgrade pro Pro quando seu negócio crescer e quiser agendamentos ilimitados.',
   },
   {
-    question: 'Preciso de conhecimento técnico para usar?',
+    question: 'Preciso de conhecimento técnico?',
     answer:
-      'Não! A plataforma foi desenvolvida para ser extremamente intuitiva. Se você sabe usar o WhatsApp, vai conseguir configurar sua vitrine virtual em minutos.',
+      'Não. Se você sabe usar o WhatsApp, sabe usar a Vitrine Virtual. Tudo é feito por um painel simples, sem código.',
   },
   {
-    question: 'Funciona no celular?',
+    question: 'Funciona pra equipe com vários profissionais?',
     answer:
-      'Perfeitamente! Tanto você quanto seus clientes podem acessar de qualquer dispositivo - celular, tablet ou computador. O design é totalmente responsivo.',
+      'Sim. Nos planos pagos você adiciona profissionais com agenda própria — ideal pra barbearias e salões com vários atendentes.',
   },
   {
-    question: 'Como personalizo as cores da minha marca?',
+    question: 'Como os lembretes reduzem as faltas?',
     answer:
-      'No painel administrativo, você tem acesso completo para customizar cores, logo, fontes e muito mais. É simples como usar um editor de fotos.',
+      'O cliente recebe confirmação na hora do agendamento e um lembrete automático antes do horário. Isso reduz drasticamente os esquecimentos e o no-show.',
   },
   {
-    question: 'Tem limite de agendamentos?',
+    question: 'Meus clientes precisam baixar algum app?',
     answer:
-      'O plano Basic tem limite de 20 agendamentos por mês. Os planos Pro e Enterprise têm agendamentos ilimitados para você crescer sem preocupações.',
-  },
-  {
-    question: 'Como recebo notificações dos agendamentos?',
-    answer:
-      'Você recebe notificações em tempo real por email, WhatsApp e no próprio painel. Pode configurar lembretes automáticos para você e seus clientes.',
+      'Não. Eles agendam direto pelo link, no navegador do celular. É só tocar, escolher o serviço e o horário.',
   },
   {
     question: 'Posso usar meu próprio domínio?',
     answer:
-      'Sim! No plano Pro e Enterprise você pode usar seu próprio domínio personalizado (ex: agenda.seusite.com) para reforçar sua marca.',
+      'Sim! Nos planos Pro e Enterprise você pode usar um domínio personalizado (ex.: agenda.seunegocio.com.br) pra reforçar a sua marca.',
+  },
+  {
+    question: 'Perco meus dados se cancelar?',
+    answer:
+      'Você pode cancelar quando quiser, sem multa. Antes disso, é possível exportar seus agendamentos e contatos.',
   },
 ];
 
 export const ctaFinal = {
-  title: 'Pronto para começar?',
-  subtitle: 'Junte-se a centenas de negócios que já usam Vitrine Virtual',
-  cta: 'Começar Grátis Agora',
+  title: 'Pronto pra encher sua agenda?',
+  subtitle: 'Junte-se a centenas de negócios que já agendam no automático com a Vitrine Virtual.',
+  cta: 'Criar minha vitrine grátis',
   disclaimer: 'Sem cartão de crédito. Cancele quando quiser.',
 };
 
 export const footer = {
-  description: 'Plataforma profissional de agendamentos para transformar seu negócio.',
+  description: 'A agenda online que enche o seu negócio — barbearias, salões, estúdios e clínicas.',
   social: [
-    { name: 'Instagram', url: '#', icon: 'Instagram' },
-    { name: 'Facebook', url: '#', icon: 'Facebook' },
-    { name: 'Twitter', url: '#', icon: 'Twitter' },
-    { name: 'LinkedIn', url: '#', icon: 'Linkedin' },
+    { name: 'Instagram', url: 'https://www.instagram.com/vitrinevirtofc', icon: 'Instagram' },
+    { name: 'WhatsApp', url: 'https://wa.me/5527998547188', icon: 'MessageCircle' },
   ],
   links: {
     product: [
-      { label: 'Features', href: '#features' },
+      { label: 'Recursos', href: '#features' },
+      { label: 'Como funciona', href: '#how-it-works' },
       { label: 'Preços', href: '#pricing' },
-      { label: 'Como Funciona', href: '#how-it-works' },
-      { label: 'Roadmap', href: '#' },
+      { label: 'Perguntas frequentes', href: '#faq' },
     ],
     support: [
-      { label: 'FAQ', href: '#faq' },
-      { label: 'Contato', href: '/contact' },
-      { label: 'Docs', href: '#' },
-      { label: 'Status', href: '#' },
-    ],
-    legal: [
-      { label: 'Termos de Uso', href: '#' },
-      { label: 'Política de Privacidade', href: '#' },
-      { label: 'Cookies', href: '#' },
+      { label: 'Falar no WhatsApp', href: 'https://wa.me/5527998547188' },
+      { label: 'Entrar no painel', href: 'https://painel.vitrinevirt.com/login' },
+      { label: 'Ver demonstração', href: 'https://demo.vitrinevirt.com' },
     ],
   },
   copyright: '© 2025 Vitrine Virtual. Todos os direitos reservados.',
