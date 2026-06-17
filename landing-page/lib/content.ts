@@ -180,6 +180,96 @@ export const testimonials: Testimonial[] = [
     image: '/images/testimonials/avatar-3.jpg',
     rating: 5,
   },
+  {
+    id: 4,
+    name: 'Carlos Mendes',
+    role: 'Barbeiro',
+    company: 'Don Carlos Barbearia',
+    content:
+      'O lembrete automático no WhatsApp acabou com os furos. Antes eu tinha umas 5 faltas por semana, hoje é raríssimo alguém não aparecer.',
+    image: '/images/testimonials/avatar-4.jpg',
+    rating: 5,
+  },
+  {
+    id: 5,
+    name: 'Patrícia Lima',
+    role: 'Cabeleireira',
+    company: 'Salão Glamour',
+    content:
+      'Meus clientes adoraram poder agendar a qualquer hora, até de madrugada. Pra mim sobrou tempo pra focar no atendimento.',
+    image: '/images/testimonials/avatar-5.jpg',
+    rating: 5,
+  },
+  {
+    id: 6,
+    name: 'Rafael Oliveira',
+    role: 'Tatuador',
+    company: 'Black Ink Studio',
+    content:
+      'A vitrine ficou com a cara do meu estúdio. Passou muito mais profissionalismo e fechei mais sessões só com o link na bio.',
+    image: '/images/testimonials/avatar-6.jpg',
+    rating: 5,
+  },
+  {
+    id: 7,
+    name: 'Fernanda Costa',
+    role: 'Manicure',
+    company: 'Espaço Fer Nails',
+    content:
+      'Eu não entendo nada de tecnologia e mesmo assim coloquei tudo no ar sozinha. É muito fácil de usar.',
+    image: '/images/testimonials/avatar-7.jpg',
+    rating: 5,
+  },
+  {
+    id: 8,
+    name: 'Bruno Almeida',
+    role: 'Personal Trainer',
+    company: 'BA Performance',
+    content:
+      'Organizei todos os meus horários de treino num só lugar. Os alunos agendam sozinhos e eu acompanho tudo pelo celular.',
+    image: '/images/testimonials/avatar-8.jpg',
+    rating: 5,
+  },
+  {
+    id: 9,
+    name: 'Camila Souza',
+    role: 'Designer de Sobrancelhas',
+    company: 'Camila Brows',
+    content:
+      'Reduzi muito as faltas e ainda consegui encaixar mais clientes no dia. Em um mês já valeu o investimento.',
+    image: '/images/testimonials/avatar-9.jpg',
+    rating: 5,
+  },
+  {
+    id: 10,
+    name: 'Diego Ferreira',
+    role: 'Fotógrafo',
+    company: 'DF Estúdio',
+    content:
+      'Agendamento de ensaios virou outra coisa. O cliente escolhe o pacote e o horário, e eu só preciso confirmar. Profissional demais.',
+    image: '/images/testimonials/avatar-10.jpg',
+    rating: 5,
+  },
+  {
+    id: 11,
+    name: 'Aline Martins',
+    role: 'Proprietária',
+    company: 'Clínica Estética Renove',
+    content:
+      'Gerencio a agenda de 4 profissionais sem confusão nenhuma. O painel é claro e o suporte responde rápido quando preciso.',
+    image: '/images/testimonials/avatar-11.jpg',
+    rating: 5,
+  },
+  {
+    id: 12,
+    name: 'Thiago Nunes',
+    role: 'Barbeiro',
+    company: 'Studio TN',
+    content:
+      'O melhor é não precisar mais parar no meio de um corte pra responder WhatsApp. A agenda se organiza sozinha enquanto eu trabalho.',
+    image: '/images/testimonials/avatar-12.jpg',
+    rating: 5,
+  },
 ];
 
 export const pricingPlans: PricingPlan[] = [
@@ -220,7 +310,7 @@ export const pricingPlans: PricingPlan[] = [
     name: 'Enterprise',
     price: 150,
     priceYearly: 1800,
-    description: 'Pra equipes e clínicas',
+    description: 'Personalizável para equipes e clínicas',
     features: [
       'Tudo do Pro +',
       'White label completo',
@@ -229,7 +319,7 @@ export const pricingPlans: PricingPlan[] = [
       'Configuração feita por nós',
       'Garantia de funcionamento 24h',
     ],
-    additionalInfo: 'Profissionais adicionais: +R$50/cada',
+    additionalInfo: 'Plano sob medida: o valor varia conforme o tamanho da sua equipe e os recursos que você precisa.',
     cta: 'Falar com Vendas',
   },
 ];
