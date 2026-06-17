@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { authedFetch } from '@/lib/api';
 
 export default function NewTenantPage() {
   const router = useRouter();
@@ -31,15 +32,17 @@ export default function NewTenantPage() {
     setIsLoading(true);
 
     try {
-      // In production, call API to create tenant
-      // await createTenant(formData);
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
+      const res = await authedFetch('/api/admin/create-tenant', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao criar cliente');
+      }
       router.push('/dashboard/tenants');
-    } catch (err: any) {
-      setError(err.message || 'Erro ao criar cliente');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao criar cliente');
     } finally {
       setIsLoading(false);
     }
