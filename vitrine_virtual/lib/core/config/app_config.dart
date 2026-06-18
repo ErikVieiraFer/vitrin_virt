@@ -39,4 +39,12 @@ class AppConfig {
     AppLogger.info('Usando fallback demo', tag: 'AppConfig');
     return 'demo';
   }
+
+  /// Indica se a vitrine está em modo de preview ao vivo (?preview=1),
+  /// embutida no editor do painel. Nesse modo a vitrine escuta postMessage
+  /// e aplica o rascunho (tema + seções) sem salvar.
+  static bool isPreview() {
+    final value = Uri.base.queryParameters['preview'];
+    return value == '1' || value == 'true';
+  }
 }

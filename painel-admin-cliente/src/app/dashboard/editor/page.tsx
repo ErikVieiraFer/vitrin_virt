@@ -40,16 +40,17 @@ export default function EditorPage() {
   }, [tenant]);
 
   // Envia o rascunho para a vitrine (preview ao vivo). O app Flutter em modo
-  // ?preview=1 escuta este postMessage (Chunk 2/3). Debounce para não floodar.
+  // ?preview=1 escuta este postMessage. Enviamos como JSON string para um
+  // parsing robusto no Dart. Debounce para não floodar.
   useEffect(() => {
     if (!tenant) return;
     const timer = setTimeout(() => {
       iframeRef.current?.contentWindow?.postMessage(
-        {
+        JSON.stringify({
           source: 'vitrine-editor',
           theme: tenant.themeSettings,
           sections,
-        },
+        }),
         '*'
       );
     }, 200);

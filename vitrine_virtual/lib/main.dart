@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'core/config/app_config.dart';
 import 'core/config/firebase_config.dart';
 import 'core/di/injection.dart';
+import 'core/preview/preview_channel.dart';
 import 'core/routes/app_routes.dart';
 import 'core/routes/route_generator.dart';
 import 'core/theme/theme_config.dart';
@@ -60,8 +62,23 @@ class VitrinaVirtualApp extends StatelessWidget {
 }
 
 /// View principal que escuta mudanças do tema.
-class AppView extends StatelessWidget {
+class AppView extends StatefulWidget {
   const AppView({super.key});
+
+  @override
+  State<AppView> createState() => _AppViewState();
+}
+
+class _AppViewState extends State<AppView> {
+  @override
+  void initState() {
+    super.initState();
+    // Modo preview ao vivo: escuta o editor (postMessage) e aplica o rascunho.
+    if (AppConfig.isPreview()) {
+      final cubit = context.read<TenantCubit>();
+      startPreviewListener(cubit.applyPreview);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

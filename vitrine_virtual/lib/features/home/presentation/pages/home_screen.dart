@@ -7,6 +7,8 @@ import '../../../services/domain/entities/service.dart';
 import '../../../services/presentation/cubit/services_cubit.dart';
 import '../../../services/presentation/cubit/services_state.dart';
 import '../../../tenant/domain/entities/tenant.dart';
+import '../../../tenant/presentation/cubit/tenant_cubit.dart';
+import '../../../tenant/presentation/cubit/tenant_state.dart';
 import '../widgets/service_grid.dart';
 import '../widgets/tenant_header.dart';
 import '../widgets/vitrine_sections_view.dart';
@@ -30,52 +32,62 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          TenantHeader(tenant: widget.tenant),
-          Expanded(
-            child: BlocBuilder<ServicesCubit, ServicesState>(
-              builder: (context, state) {
-                if (state is ServicesLoading) {
-                  return const LoadingIndicator(
-                    message: 'Carregando serviços...',
-                  );
-                }
+    // Lê o tenant do cubit para refletir o preview ao vivo (tema + seções).
+    // Sem preview, o tenant do cubit é o mesmo recebido pela rota.
+    return BlocBuilder<TenantCubit, TenantState>(
+      builder: (context, tenantState) {
+        final tenant =
+            tenantState is TenantLoaded ? tenantState.tenant : widget.tenant;
 
-                if (state is ServicesError) {
-                  return ErrorDisplay(
-                    message: state.message,
-                    onRetry: () {
-                      context
-                          .read<ServicesCubit>()
-                          .loadServices(widget.tenant.id);
-                    },
-                  );
-                }
+        return Scaffold(
+          body: Column(
+            children: [
+              TenantHeader(tenant: tenant),
+              Expanded(
+                child: BlocBuilder<ServicesCubit, ServicesState>(
+                  builder: (context, state) {
+                    if (state is ServicesLoading) {
+                      return const LoadingIndicator(
+                        message: 'Carregando serviços...',
+                      );
+                    }
 
-                if (state is ServicesLoaded) {
-                  // Com seções customizadas: renderiza a vitrine montada no editor.
-                  // Sem seções (tenant legado): mantém o grid de serviços padrão.
-                  if (widget.tenant.sections.isNotEmpty) {
-                    return VitrineSectionsView(
-                      sections: widget.tenant.sections,
-                      services: state.services,
-                      onServiceTap: _navigateToServiceDetail,
-                    );
-                  }
-                  return ServiceGrid(
-                    services: state.services,
-                    onServiceTap: (service) => _navigateToServiceDetail(service),
-                  );
-                }
+                    if (state is ServicesError) {
+                      return ErrorDisplay(
+                        message: state.message,
+                        onRetry: () {
+                          context
+                              .read<ServicesCubit>()
+                              .loadServices(widget.tenant.id);
+                        },
+                      );
+                    }
 
-                return const SizedBox.shrink();
-              },
-            ),
+                    if (state is ServicesLoaded) {
+                      // Com seções customizadas: renderiza a vitrine montada no editor.
+                      // Sem seções (tenant legado): mantém o grid de serviços padrão.
+                      if (tenant.sections.isNotEmpty) {
+                        return VitrineSectionsView(
+                          sections: tenant.sections,
+                          services: state.services,
+                          onServiceTap: _navigateToServiceDetail,
+                        );
+                      }
+                      return ServiceGrid(
+                        services: state.services,
+                        onServiceTap: (service) =>
+                            _navigateToServiceDetail(service),
+                      );
+                    }
+
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
