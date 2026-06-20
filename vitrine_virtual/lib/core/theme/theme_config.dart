@@ -7,7 +7,11 @@ class ThemeConfig {
     required Color primaryColor,
     required Color secondaryColor,
     String? fontFamily,
+    Color? backgroundColor,
+    String? buttonStyle,
   }) {
+    final double buttonRadius =
+        buttonStyle == 'pill' ? 100 : (buttonStyle == 'square' ? 4 : 8);
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
@@ -15,7 +19,7 @@ class ThemeConfig {
         secondary: secondaryColor,
         brightness: Brightness.light,
       ),
-      scaffoldBackgroundColor: AppColors.backgroundLight,
+      scaffoldBackgroundColor: backgroundColor ?? AppColors.backgroundLight,
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
@@ -39,7 +43,7 @@ class ThemeConfig {
           elevation: 2,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(buttonRadius),
           ),
           textStyle: AppTextStyles.labelLarge(fontFamily),
         ),

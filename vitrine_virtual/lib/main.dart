@@ -110,6 +110,8 @@ class _AppViewState extends State<AppView> {
           primaryColor: themeSettings.primaryColor.toColor(),
           secondaryColor: themeSettings.secondaryColor.toColor(),
           fontFamily: themeSettings.fontFamily,
+          backgroundColor: themeSettings.backgroundColor?.toColor(),
+          buttonStyle: themeSettings.buttonStyle,
         );
       } catch (e) {
         return ThemeConfig.defaultTheme;

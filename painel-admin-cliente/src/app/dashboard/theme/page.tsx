@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ImageUpload } from '@/components/image-upload';
 import { ColorPicker } from '@/components/color-picker';
 import { Loader2, Palette } from 'lucide-react';
-import type { ThemeSettings } from '@/types/tenant';
+import type { ButtonStyle, ThemeSettings } from '@/types/tenant';
 
 const FONT_OPTIONS = [
   { value: 'Inter', label: 'Inter' },
@@ -149,7 +149,38 @@ export default function ThemePage() {
               </Select>
             </div>
 
-            <div className="p-6 border rounded-lg space-y-4">
+            <ColorPicker
+              label="Cor de Fundo da Vitrine"
+              id="background-color"
+              value={themeSettings.backgroundColor || '#ffffff'}
+              onChange={(color) =>
+                setThemeSettings((prev) => ({ ...prev, backgroundColor: color }))
+              }
+            />
+
+            <div className="space-y-2">
+              <Label htmlFor="button-style">Estilo dos botões</Label>
+              <Select
+                id="button-style"
+                value={themeSettings.buttonStyle || 'rounded'}
+                onChange={(e) =>
+                  setThemeSettings((prev) => ({
+                    ...prev,
+                    buttonStyle: e.target.value as ButtonStyle,
+                  }))
+                }
+                disabled={loading}
+              >
+                <option value="rounded">Arredondado</option>
+                <option value="pill">Pílula (bem redondo)</option>
+                <option value="square">Quadrado</option>
+              </Select>
+            </div>
+
+            <div
+              className="p-6 border rounded-lg space-y-4"
+              style={{ backgroundColor: themeSettings.backgroundColor || undefined }}
+            >
               <h3 className="font-semibold">Preview</h3>
               <div className="space-y-3">
                 <div
@@ -169,6 +200,23 @@ export default function ThemePage() {
                   }}
                 >
                   Cor Secundária
+                </div>
+                <div className="flex justify-center">
+                  <span
+                    className="px-6 py-2 text-white font-medium"
+                    style={{
+                      backgroundColor: themeSettings.primaryColor,
+                      fontFamily: themeSettings.fontFamily,
+                      borderRadius:
+                        themeSettings.buttonStyle === 'pill'
+                          ? 9999
+                          : themeSettings.buttonStyle === 'square'
+                          ? 4
+                          : 8,
+                    }}
+                  >
+                    Botão de exemplo
+                  </span>
                 </div>
                 <p
                   className="text-center text-muted-foreground"

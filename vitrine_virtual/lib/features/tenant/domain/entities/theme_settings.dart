@@ -11,10 +11,18 @@ class ThemeSettings extends Equatable {
   final HexColor secondaryColor;
   final String? fontFamily;
 
+  /// Cor de fundo da vitrine (opcional; null usa o padrão claro).
+  final HexColor? backgroundColor;
+
+  /// Estilo dos botões: 'rounded' (padrão) | 'pill' | 'square'.
+  final String? buttonStyle;
+
   const ThemeSettings({
     required this.primaryColor,
     required this.secondaryColor,
     this.fontFamily,
+    this.backgroundColor,
+    this.buttonStyle,
   });
 
   /// Cria ThemeSettings com cores padrão.
@@ -49,14 +57,19 @@ class ThemeSettings extends Equatable {
     HexColor? primaryColor,
     HexColor? secondaryColor,
     String? fontFamily,
+    HexColor? backgroundColor,
+    String? buttonStyle,
   }) {
     return ThemeSettings(
       primaryColor: primaryColor ?? this.primaryColor,
       secondaryColor: secondaryColor ?? this.secondaryColor,
       fontFamily: fontFamily ?? this.fontFamily,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      buttonStyle: buttonStyle ?? this.buttonStyle,
     );
   }
 
   @override
-  List<Object?> get props => [primaryColor, secondaryColor, fontFamily];
+  List<Object?> get props =>
+      [primaryColor, secondaryColor, fontFamily, backgroundColor, buttonStyle];
 }

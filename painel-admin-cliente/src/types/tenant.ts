@@ -1,10 +1,14 @@
 import type { VitrineSection } from './section';
 
+export type ButtonStyle = 'rounded' | 'pill' | 'square';
+
 export interface ThemeSettings {
   primaryColor: string;
   secondaryColor: string;
   fontFamily: string;
   logoUrl?: string;
+  backgroundColor?: string;
+  buttonStyle?: ButtonStyle;
 }
 
 export interface Tenant {

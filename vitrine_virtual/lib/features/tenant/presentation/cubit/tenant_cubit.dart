@@ -69,6 +69,15 @@ class TenantCubit extends Cubit<TenantState> {
               ),
               fontFamily:
                   (themeJson['fontFamily'] ?? themeJson['font_family'])?.toString(),
+              backgroundColor:
+                  (themeJson['backgroundColor'] ?? themeJson['background_color']) != null
+                      ? HexColor(
+                          (themeJson['backgroundColor'] ?? themeJson['background_color'])
+                              .toString(),
+                        )
+                      : null,
+              buttonStyle:
+                  (themeJson['buttonStyle'] ?? themeJson['button_style'])?.toString(),
             )
           : null;
 
