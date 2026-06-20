@@ -48,6 +48,26 @@ class VitrineSection extends Equatable {
   /// Estilo dos cards de serviço: 'classic' | 'overlay' | 'list'.
   String get cardStyle => (data['cardStyle'] ?? 'classic').toString();
 
+  // Redes sociais / endereço.
+  String get whatsapp => (data['whatsapp'] ?? '').toString();
+  String get instagram => (data['instagram'] ?? '').toString();
+  String get facebook => (data['facebook'] ?? '').toString();
+  String get tiktok => (data['tiktok'] ?? '').toString();
+  String get address => (data['address'] ?? '').toString();
+  String get mapUrl => (data['mapUrl'] ?? '').toString();
+
+  /// Itens de listas (depoimentos: {name,text,rating}; horários: {label,value}).
+  List<Map<String, dynamic>> get items {
+    final raw = data['items'];
+    if (raw is List) {
+      return raw
+          .whereType<Map>()
+          .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
+          .toList();
+    }
+    return const [];
+  }
+
   List<String> get images {
     final raw = data['images'];
     if (raw is List) {

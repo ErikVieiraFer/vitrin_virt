@@ -27,6 +27,7 @@ import {
   type SectionType,
   type VitrineSection,
 } from '@/types/section';
+import { NICHE_TEMPLATES } from '@/lib/section-templates';
 
 export default function EditorPage() {
   const { tenant } = useAuth();
@@ -167,8 +168,22 @@ export default function EditorPage() {
         <div className="space-y-4">
           {sections.length === 0 && (
             <Card>
-              <CardContent className="py-10 text-center text-muted-foreground">
-                Nenhuma seção ainda. Adicione a primeira abaixo.
+              <CardContent className="space-y-4 py-8 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Comece de um template pronto do seu nicho — ou monte do zero abaixo.
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {NICHE_TEMPLATES.map((tpl) => (
+                    <Button
+                      key={tpl.key}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSections(tpl.build())}
+                    >
+                      {tpl.label}
+                    </Button>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           )}
@@ -321,6 +336,214 @@ export default function EditorPage() {
                       />
                       Mostrar preços dos serviços
                     </label>
+                  </>
+                )}
+
+                {section.type === 'cover' && (
+                  <>
+                    <div className="space-y-1">
+                      <Label>Título</Label>
+                      <Input
+                        value={section.data.title}
+                        onChange={(e) => updateData(section.id, { title: e.target.value })}
+                        placeholder="Nome do seu negócio"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Subtítulo</Label>
+                      <Input
+                        value={section.data.subtitle}
+                        onChange={(e) => updateData(section.id, { subtitle: e.target.value })}
+                        placeholder="Sua frase de efeito"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Foto de capa</Label>
+                      <ImageUpload
+                        value={section.data.imageUrl}
+                        onChange={(url) => updateData(section.id, { imageUrl: url })}
+                        onFileSelect={(file) => uploadSectionImage(tenant.id, file)}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {section.type === 'testimonials' && (
+                  <div className="space-y-3">
+                    {section.data.items.map((item, i) => (
+                      <div key={i} className="space-y-2 rounded-md border border-border p-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-muted-foreground">
+                            Depoimento {i + 1}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              updateData(section.id, {
+                                items: section.data.items.filter((_, idx) => idx !== i),
+                              })
+                            }
+                          >
+                            <X className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                        <Input
+                          value={item.name}
+                          placeholder="Nome do cliente"
+                          onChange={(e) => {
+                            const items = [...section.data.items];
+                            items[i] = { ...items[i], name: e.target.value };
+                            updateData(section.id, { items });
+                          }}
+                        />
+                        <Textarea
+                          value={item.text}
+                          rows={2}
+                          placeholder="O que o cliente falou"
+                          onChange={(e) => {
+                            const items = [...section.data.items];
+                            items[i] = { ...items[i], text: e.target.value };
+                            updateData(section.id, { items });
+                          }}
+                        />
+                        <Select
+                          value={String(item.rating)}
+                          onChange={(e) => {
+                            const items = [...section.data.items];
+                            items[i] = { ...items[i], rating: Number(e.target.value) };
+                            updateData(section.id, { items });
+                          }}
+                        >
+                          {[5, 4, 3, 2, 1].map((r) => (
+                            <option key={r} value={r}>
+                              {r} estrelas
+                            </option>
+                          ))}
+                        </Select>
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        updateData(section.id, {
+                          items: [...section.data.items, { name: '', text: '', rating: 5 }],
+                        })
+                      }
+                    >
+                      <Plus className="h-4 w-4" />
+                      Adicionar depoimento
+                    </Button>
+                  </div>
+                )}
+
+                {section.type === 'social' && (
+                  <>
+                    <div className="space-y-1">
+                      <Label>WhatsApp (DDD + número)</Label>
+                      <Input
+                        value={section.data.whatsapp ?? ''}
+                        onChange={(e) => updateData(section.id, { whatsapp: e.target.value })}
+                        placeholder="5527998547188"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Instagram (@ ou link)</Label>
+                      <Input
+                        value={section.data.instagram ?? ''}
+                        onChange={(e) => updateData(section.id, { instagram: e.target.value })}
+                        placeholder="@seunegocio"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Facebook (link)</Label>
+                      <Input
+                        value={section.data.facebook ?? ''}
+                        onChange={(e) => updateData(section.id, { facebook: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>TikTok (@ ou link)</Label>
+                      <Input
+                        value={section.data.tiktok ?? ''}
+                        onChange={(e) => updateData(section.id, { tiktok: e.target.value })}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {section.type === 'hours' && (
+                  <div className="space-y-2">
+                    {section.data.items.map((item, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Input
+                          className="flex-1"
+                          value={item.label}
+                          placeholder="Seg a Sex"
+                          onChange={(e) => {
+                            const items = [...section.data.items];
+                            items[i] = { ...items[i], label: e.target.value };
+                            updateData(section.id, { items });
+                          }}
+                        />
+                        <Input
+                          className="flex-1"
+                          value={item.value}
+                          placeholder="09:00 - 19:00"
+                          onChange={(e) => {
+                            const items = [...section.data.items];
+                            items[i] = { ...items[i], value: e.target.value };
+                            updateData(section.id, { items });
+                          }}
+                        />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() =>
+                            updateData(section.id, {
+                              items: section.data.items.filter((_, idx) => idx !== i),
+                            })
+                          }
+                        >
+                          <X className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        updateData(section.id, {
+                          items: [...section.data.items, { label: '', value: '' }],
+                        })
+                      }
+                    >
+                      <Plus className="h-4 w-4" />
+                      Adicionar horário
+                    </Button>
+                  </div>
+                )}
+
+                {section.type === 'address' && (
+                  <>
+                    <div className="space-y-1">
+                      <Label>Endereço</Label>
+                      <Textarea
+                        value={section.data.address}
+                        rows={2}
+                        placeholder="Rua, número, bairro, cidade"
+                        onChange={(e) => updateData(section.id, { address: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Link do mapa (Google Maps, opcional)</Label>
+                      <Input
+                        value={section.data.mapUrl ?? ''}
+                        onChange={(e) => updateData(section.id, { mapUrl: e.target.value })}
+                        placeholder="https://maps.app.goo.gl/..."
+                      />
+                    </div>
                   </>
                 )}
               </CardContent>
