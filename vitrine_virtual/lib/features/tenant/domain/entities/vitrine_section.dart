@@ -45,6 +45,9 @@ class VitrineSection extends Equatable {
   String get body => (data['body'] ?? '') as String;
   bool get showPrices => (data['showPrices'] ?? true) as bool;
 
+  /// Estilo dos cards de serviço: 'classic' | 'overlay' | 'list'.
+  String get cardStyle => (data['cardStyle'] ?? 'classic').toString();
+
   List<String> get images {
     final raw = data['images'];
     if (raw is List) {

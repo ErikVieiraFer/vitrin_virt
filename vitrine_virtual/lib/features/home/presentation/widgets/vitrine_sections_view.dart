@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../services/domain/entities/service.dart';
 import '../../../tenant/domain/entities/vitrine_section.dart';
-import 'service_card.dart';
+import 'animated_service_card.dart';
 
 /// Renderiza as seções customizáveis da vitrine (editor visual do painel).
 ///
@@ -42,6 +42,8 @@ class VitrineSectionsView extends StatelessWidget {
         return _ServicesSection(
           services: services,
           onServiceTap: onServiceTap,
+          cardStyle: section.cardStyle,
+          showPrices: section.showPrices,
         );
       default:
         return const SizedBox.shrink();
@@ -174,14 +176,44 @@ class _GallerySection extends StatelessWidget {
 class _ServicesSection extends StatelessWidget {
   final List<Service> services;
   final void Function(Service) onServiceTap;
-  const _ServicesSection({required this.services, required this.onServiceTap});
+  final String cardStyle;
+  final bool showPrices;
+
+  const _ServicesSection({
+    required this.services,
+    required this.onServiceTap,
+    required this.cardStyle,
+    required this.showPrices,
+  });
 
   @override
   Widget build(BuildContext context) {
     if (services.isEmpty) return const SizedBox.shrink();
 
+    // Estilo "list": cards horizontais empilhados (1 por linha).
+    if (cardStyle == 'list') {
+      return Padding(
+        padding: AppSpacing.paddingMd,
+        child: Column(
+          children: [
+            for (final service in services) ...[
+              AnimatedServiceCard(
+                service: service,
+                onTap: () => onServiceTap(service),
+                cardStyle: cardStyle,
+                showPrices: showPrices,
+              ),
+              SizedBox(height: AppSpacing.sm),
+            ],
+          ],
+        ),
+      );
+    }
+
+    // Estilos "classic" e "overlay": grid responsivo.
     final width = MediaQuery.of(context).size.width;
     final crossAxisCount = width >= 900 ? 3 : (width >= 600 ? 2 : 1);
+    final aspectRatio = cardStyle == 'overlay' ? 0.85 : 0.78;
 
     return Padding(
       padding: AppSpacing.paddingMd,
@@ -192,13 +224,15 @@ class _ServicesSection extends StatelessWidget {
           crossAxisCount: crossAxisCount,
           crossAxisSpacing: AppSpacing.md,
           mainAxisSpacing: AppSpacing.md,
-          childAspectRatio: 0.75,
+          childAspectRatio: aspectRatio,
         ),
         itemCount: services.length,
         itemBuilder: (context, index) {
-          return ServiceCard(
+          return AnimatedServiceCard(
             service: services[index],
             onTap: () => onServiceTap(services[index]),
+            cardStyle: cardStyle,
+            showPrices: showPrices,
           );
         },
       ),

@@ -19,8 +19,18 @@ export interface GallerySectionData {
   images: string[];
 }
 
+/** Estilo visual dos cards de serviço (com animação no toque/hover). */
+export type ServiceCardStyle = 'classic' | 'overlay' | 'list';
+
+export const SERVICE_CARD_STYLE_LABELS: Record<ServiceCardStyle, string> = {
+  classic: 'Clássico (foto em cima)',
+  overlay: 'Foto em destaque (texto sobre a imagem)',
+  list: 'Lista compacta (foto ao lado)',
+};
+
 export interface ServicesSectionData {
   showPrices: boolean;
+  cardStyle: ServiceCardStyle;
 }
 
 interface SectionBase {
@@ -71,6 +81,6 @@ export function createSection(type: SectionType, order: number): VitrineSection 
     case 'gallery':
       return { id, type, order, data: { images: [] } };
     case 'services':
-      return { id, type, order, data: { showPrices: true } };
+      return { id, type, order, data: { showPrices: true, cardStyle: 'classic' } };
   }
 }

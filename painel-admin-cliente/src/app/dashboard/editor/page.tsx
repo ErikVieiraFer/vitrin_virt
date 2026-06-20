@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import {
   SECTION_LABELS,
+  SERVICE_CARD_STYLE_LABELS,
   createSection,
   type SectionType,
   type VitrineSection,
@@ -127,7 +128,12 @@ export default function EditorPage() {
     );
   }
 
-  const previewUrl = `https://${tenant.subdomain}.vitrinevirt.com/?preview=1`;
+  // Em produção: subdomínio do tenant. Local (NEXT_PUBLIC_VITRINE_BASE_URL setado):
+  // aponta para a vitrine Flutter rodando localmente, passando o tenant por query.
+  const vitrineBase = process.env.NEXT_PUBLIC_VITRINE_BASE_URL;
+  const previewUrl = vitrineBase
+    ? `${vitrineBase}/?preview=1&tenant=${tenant.subdomain}`
+    : `https://${tenant.subdomain}.vitrinevirt.com/?preview=1`;
 
   return (
     <div className="space-y-6">
@@ -290,15 +296,32 @@ export default function EditorPage() {
                 )}
 
                 {section.type === 'services' && (
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={section.data.showPrices}
-                      onChange={(e) => updateData(section.id, { showPrices: e.target.checked })}
-                      className="h-4 w-4 rounded border-border"
-                    />
-                    Mostrar preços dos serviços
-                  </label>
+                  <>
+                    <div className="space-y-1">
+                      <Label>Estilo dos cards</Label>
+                      <Select
+                        value={section.data.cardStyle ?? 'classic'}
+                        onChange={(e) => updateData(section.id, { cardStyle: e.target.value })}
+                      >
+                        {(
+                          Object.keys(SERVICE_CARD_STYLE_LABELS) as (keyof typeof SERVICE_CARD_STYLE_LABELS)[]
+                        ).map((style) => (
+                          <option key={style} value={style}>
+                            {SERVICE_CARD_STYLE_LABELS[style]}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={section.data.showPrices}
+                        onChange={(e) => updateData(section.id, { showPrices: e.target.checked })}
+                        className="h-4 w-4 rounded border-border"
+                      />
+                      Mostrar preços dos serviços
+                    </label>
+                  </>
                 )}
               </CardContent>
             </Card>
