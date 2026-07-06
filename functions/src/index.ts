@@ -9,6 +9,6 @@ export {
   reagendarAgendamento,
   listarSlots,
 } from './agendamentos';
-export { criarConta, criarProfissional } from './signup';
+export { criarConta, criarProfissional, reativarProfissional } from './signup';
 export { aoMudarAgendamento } from './notificacoes';
 export { mpWebhook } from './mercadopago';

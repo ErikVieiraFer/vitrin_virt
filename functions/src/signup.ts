@@ -142,3 +142,32 @@ export const criarProfissional = onCall({ region: REGION }, async (req) => {
 
   return { profId: profRef.id };
 });
+
+/**
+ * Reativa profissional respeitando o limite do plano
+ * (a escrita direta de ativo false -> true é bloqueada nas Rules).
+ */
+export const reativarProfissional = onCall({ region: REGION }, async (req) => {
+  if (!req.auth?.token.tenantId) throw new HttpsError('unauthenticated', 'Sem permissão');
+  const tenantId = req.auth.token.tenantId as string;
+  const { profId } = req.data as { profId: string };
+
+  const tenantRef = db().collection('tenants').doc(tenantId);
+  await db().runTransaction(async (tx) => {
+    const [tenantSnap, profSnap, ativos] = await Promise.all([
+      tx.get(tenantRef),
+      tx.get(tenantRef.collection('profissionais').doc(profId)),
+      tx.get(tenantRef.collection('profissionais').where('ativo', '==', true)),
+    ]);
+    if (!profSnap.exists) throw new HttpsError('not-found', 'Profissional não encontrado');
+    const limite = tenantSnap.data()?.assinatura?.limiteProfissionais ?? 1;
+    if (ativos.size >= limite) {
+      throw new HttpsError(
+        'resource-exhausted',
+        `Seu plano permite até ${limite} profissional(is) ativo(s). Faça upgrade para reativar.`
+      );
+    }
+    tx.update(profSnap.ref, { ativo: true, atualizadoEm: Timestamp.now() });
+  });
+  return { ok: true };
+});

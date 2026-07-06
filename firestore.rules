@@ -69,10 +69,14 @@ service cloud.firestore {
 
       match /profissionais/{profId} {
         allow read: if true;
-        // criação passa por Function (enforce de limite do plano);
-        // update/delete direto pelo dono é permitido
+        // criação e REATIVAÇÃO passam por Function (enforce de limite do plano);
+        // dono pode editar/desativar direto, mas não mudar ativo false -> true
         allow create: if isMaster();
-        allow update, delete: if isMaster() || isOwnerOf(tenantId);
+        allow update: if isMaster()
+          || (isOwnerOf(tenantId)
+              && !(resource.data.ativo == false
+                   && request.resource.data.ativo == true));
+        allow delete: if isMaster() || isOwnerOf(tenantId);
       }
 
       match /bloqueios/{bloqueioId} {

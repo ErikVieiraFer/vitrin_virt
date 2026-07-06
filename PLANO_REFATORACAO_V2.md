@@ -122,7 +122,7 @@ Personalização final do app (nome, ícones, splash), builds iOS/Android, conta
 | Fase | Status | Observações |
 |---|---|---|
 | 0 | **concluída** | docs/MODELO_DE_DADOS.md, firestore.rules, storage.rules, functions/ (callables de agendamento, signup, push, webhook MP stub), seed emulador |
-| 1 | pendente | |
+| 1 | **concluída** | app-gestao/ (Flutter+Riverpod): login, serviços, profissionais c/ limite de plano, horários/regras, shell. Falta flutterfire configure (chaves do projeto) |
 | 2 | pendente | |
 | 3 | pendente | |
 | 4 | pendente | |
