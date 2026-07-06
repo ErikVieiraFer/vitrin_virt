@@ -123,7 +123,7 @@ Personalização final do app (nome, ícones, splash), builds iOS/Android, conta
 |---|---|---|
 | 0 | **concluída** | docs/MODELO_DE_DADOS.md, firestore.rules, storage.rules, functions/ (callables de agendamento, signup, push, webhook MP stub), seed emulador |
 | 1 | **concluída** | app-gestao/ (Flutter+Riverpod): login, serviços, profissionais c/ limite de plano, horários/regras, shell. Falta flutterfire configure (chaves do projeto) |
-| 2 | pendente | |
+| 2 | **concluída** | Agenda dia c/ filtro por profissional, agendamento manual (slots via Function), concluir/cancelar/no-show via Function, bloqueios CRUD, push FCM registrado no login |
 | 3 | pendente | |
 | 4 | pendente | |
 | 5 | pendente | Produção MP depende de CNPJ (sandbox não bloqueia) |

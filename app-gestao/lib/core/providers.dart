@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'models/agendamento.dart';
 import 'models/profissional.dart';
 import 'models/servico.dart';
 import 'models/tenant.dart';
@@ -47,6 +48,25 @@ final servicosProvider = StreamProvider<List<Servico>>((ref) {
       .orderBy('nome')
       .snapshots()
       .map((snap) => snap.docs.map(Servico.fromDoc).toList());
+});
+
+/// Agendamentos de um dia (00:00–24:00 local).
+final agendamentosDoDiaProvider =
+    StreamProvider.family<List<Agendamento>, DateTime>((ref, dia) {
+  final tenantId = ref.watch(tenantIdProvider).value;
+  if (tenantId == null) return Stream.value(const []);
+  final inicio = DateTime(dia.year, dia.month, dia.day);
+  final fim = inicio.add(const Duration(days: 1));
+  return ref
+      .watch(firestoreProvider)
+      .collection('tenants')
+      .doc(tenantId)
+      .collection('agendamentos')
+      .where('inicio', isGreaterThanOrEqualTo: Timestamp.fromDate(inicio))
+      .where('inicio', isLessThan: Timestamp.fromDate(fim))
+      .orderBy('inicio')
+      .snapshots()
+      .map((snap) => snap.docs.map(Agendamento.fromDoc).toList());
 });
 
 final profissionaisProvider = StreamProvider<List<Profissional>>((ref) {

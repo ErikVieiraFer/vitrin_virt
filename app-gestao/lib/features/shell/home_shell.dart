@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/fcm.dart';
+import '../agenda/agenda_screen.dart';
 import '../config/config_screen.dart';
 import '../profissionais/profissionais_screen.dart';
 import '../servicos/servicos_screen.dart';
@@ -16,9 +18,15 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   int _aba = 0;
 
   @override
+  void initState() {
+    super.initState();
+    registrarPush();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final telas = const [
-      _AgendaPlaceholder(),
+      AgendaScreen(),
       ServicosScreen(),
       ProfissionaisScreen(),
       ConfigScreen(),
@@ -42,16 +50,3 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   }
 }
 
-class _AgendaPlaceholder extends StatelessWidget {
-  const _AgendaPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Agenda')),
-      body: const Center(
-        child: Text('Agenda chega na Fase 2 🗓️'),
-      ),
-    );
-  }
-}
