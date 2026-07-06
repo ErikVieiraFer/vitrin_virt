@@ -121,7 +121,7 @@ Personalização final do app (nome, ícones, splash), builds iOS/Android, conta
 
 | Fase | Status | Observações |
 |---|---|---|
-| 0 | pendente | |
+| 0 | **concluída** | docs/MODELO_DE_DADOS.md, firestore.rules, storage.rules, functions/ (callables de agendamento, signup, push, webhook MP stub), seed emulador |
 | 1 | pendente | |
 | 2 | pendente | |
 | 3 | pendente | |

@@ -1,0 +1,98 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isMaster() {
+      return isSignedIn() && request.auth.token.role == 'master';
+    }
+
+    function isOwnerOf(tenantId) {
+      return isSignedIn()
+        && request.auth.token.role == 'owner'
+        && request.auth.token.tenantId == tenantId;
+    }
+
+    // Campos que o dono NUNCA edita direto (só Cloud Functions/master)
+    function ownerNotTouchingProtectedFields() {
+      return !request.resource.data.diff(resource.data)
+        .affectedKeys().hasAny(['assinatura', 'ativo']);
+    }
+
+    // ---------- users ----------
+    match /users/{uid} {
+      allow read: if isMaster() || (isSignedIn() && request.auth.uid == uid);
+      // criação/edição de perfil próprio, sem trocar role/tenantId
+      allow update: if isSignedIn() && request.auth.uid == uid
+        && !request.resource.data.diff(resource.data)
+             .affectedKeys().hasAny(['role', 'tenantId']);
+      allow create, delete: if isMaster();
+      // criação real acontece via Cloud Function no signup
+    }
+
+    // ---------- slugs (reserva global) ----------
+    match /slugs/{slug} {
+      allow read: if true;              // vitrine resolve slug -> tenant
+      allow write: if isMaster();       // escrita via Function/master
+    }
+
+    // ---------- tokens de gestão de agendamento ----------
+    match /tokensAgendamento/{token} {
+      allow read, write: if false;      // uso exclusivo das Functions (Admin SDK)
+    }
+
+    // ---------- webhooks MP ----------
+    match /webhooksMp/{eventId} {
+      allow read: if isMaster();
+      allow write: if false;            // só Admin SDK
+    }
+
+    // ---------- tenants ----------
+    match /tenants/{tenantId} {
+      // Vitrine pública lê o perfil do tenant (dados públicos vivem aqui).
+      // Tenant bloqueado continua legível; a vitrine decide exibir "indisponível".
+      allow read: if true;
+      allow create: if isMaster();      // criação via Function de signup
+      allow update: if isMaster()
+        || (isOwnerOf(tenantId) && ownerNotTouchingProtectedFields());
+      allow delete: if isMaster();
+
+      match /servicos/{servicoId} {
+        allow read: if true;
+        allow write: if isMaster() || isOwnerOf(tenantId);
+      }
+
+      match /profissionais/{profId} {
+        allow read: if true;
+        // criação passa por Function (enforce de limite do plano);
+        // update/delete direto pelo dono é permitido
+        allow create: if isMaster();
+        allow update, delete: if isMaster() || isOwnerOf(tenantId);
+      }
+
+      match /bloqueios/{bloqueioId} {
+        allow read: if true;            // vitrine precisa calcular slots livres
+        allow write: if isMaster() || isOwnerOf(tenantId);
+      }
+
+      match /agendamentos/{agendamentoId} {
+        // Dono vê a própria agenda. Cliente final NÃO lê direto
+        // (slots livres são servidos por Function, sem expor dados de terceiros).
+        allow read: if isMaster() || isOwnerOf(tenantId);
+        // Toda escrita via Cloud Functions (validação de conflito/antecedência)
+        allow write: if false;
+      }
+
+      match /financeiro/{lancamentoId} {
+        allow read: if isMaster() || isOwnerOf(tenantId);
+        allow create, update: if isMaster() || isOwnerOf(tenantId);
+        allow delete: if isMaster() || isOwnerOf(tenantId);
+      }
+    }
+  }
+}

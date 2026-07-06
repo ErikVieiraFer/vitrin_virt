@@ -1,0 +1,14 @@
+import * as admin from 'firebase-admin';
+
+admin.initializeApp();
+
+export {
+  criarAgendamento,
+  criarAgendamentoManual,
+  cancelarAgendamento,
+  reagendarAgendamento,
+  listarSlots,
+} from './agendamentos';
+export { criarConta, criarProfissional } from './signup';
+export { aoMudarAgendamento } from './notificacoes';
+export { mpWebhook } from './mercadopago';

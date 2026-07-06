@@ -1,0 +1,30 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "agendamentos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "profId", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "inicio", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "agendamentos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "inicio", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "financeiro",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "profId", "order": "ASCENDING" },
+        { "fieldPath": "data", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

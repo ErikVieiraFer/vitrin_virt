@@ -1,0 +1,14 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Imagens públicas do tenant (logo, capa, fotos, serviços, profissionais)
+    match /tenants/{tenantId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.tenantId == tenantId
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+  }
+}
