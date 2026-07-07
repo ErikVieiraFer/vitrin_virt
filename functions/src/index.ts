@@ -5,6 +5,7 @@ admin.initializeApp();
 export {
   criarAgendamento,
   criarAgendamentoManual,
+  obterAgendamentoPorToken,
   cancelarAgendamento,
   reagendarAgendamento,
   listarSlots,

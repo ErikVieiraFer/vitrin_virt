@@ -150,6 +150,38 @@ async function resolverToken(token: string) {
   return { tenantId: tenantId as string, ref, agendamento: snap.data()! };
 }
 
+/** Cliente final consulta o próprio agendamento via token (dados seguros p/ página /a/{token}). */
+export const obterAgendamentoPorToken = onCall({ region: REGION }, async (req) => {
+  const { token } = req.data as { token: string };
+  const { tenantId, agendamento } = await resolverToken(token);
+
+  const tenantSnap = await db().collection('tenants').doc(tenantId).get();
+  const tenant = tenantSnap.data()!;
+  const [profSnap, servicoSnap] = await Promise.all([
+    tenantSnap.ref.collection('profissionais').doc(agendamento.profId).get(),
+    tenantSnap.ref.collection('servicos').doc(agendamento.servicoId).get(),
+  ]);
+
+  return {
+    negocio: {
+      nome: tenant.perfil?.nome ?? '',
+      slug: tenant.perfil?.slug ?? '',
+      whatsapp: tenant.perfil?.telefoneWhatsapp ?? '',
+    },
+    agendamento: {
+      inicioIso: (agendamento.inicio as Timestamp).toDate().toISOString(),
+      status: agendamento.status,
+      clienteNome: agendamento.cliente?.nome ?? '',
+      profissional: profSnap.data()?.nome ?? '',
+      servico: servicoSnap.data()?.nome ?? '',
+      profId: agendamento.profId,
+      servicoId: agendamento.servicoId,
+      antecedenciaMinCancelamentoMin:
+        tenant.configAgenda?.antecedenciaMinCancelamentoMin ?? 120,
+    },
+  };
+});
+
 /** Cliente final cancela via token (respeita antecedência mínima do tenant). */
 export const cancelarAgendamento = onCall({ region: REGION }, async (req) => {
   const { token, motivo } = req.data as { token: string; motivo?: string };
