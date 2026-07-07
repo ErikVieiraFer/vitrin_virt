@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'models/agendamento.dart';
+import 'models/lancamento.dart';
 import 'models/profissional.dart';
 import 'models/servico.dart';
 import 'models/tenant.dart';
@@ -67,6 +68,36 @@ final agendamentosDoDiaProvider =
       .orderBy('inicio')
       .snapshots()
       .map((snap) => snap.docs.map(Agendamento.fromDoc).toList());
+});
+
+/// Intervalo fechado-aberto [inicio, fim) para relatórios.
+class Periodo {
+  final DateTime inicio;
+  final DateTime fim;
+  const Periodo(this.inicio, this.fim);
+
+  @override
+  bool operator ==(Object other) =>
+      other is Periodo && other.inicio == inicio && other.fim == fim;
+
+  @override
+  int get hashCode => Object.hash(inicio, fim);
+}
+
+final lancamentosProvider =
+    StreamProvider.family<List<Lancamento>, Periodo>((ref, periodo) {
+  final tenantId = ref.watch(tenantIdProvider).value;
+  if (tenantId == null) return Stream.value(const []);
+  return ref
+      .watch(firestoreProvider)
+      .collection('tenants')
+      .doc(tenantId)
+      .collection('financeiro')
+      .where('data', isGreaterThanOrEqualTo: Timestamp.fromDate(periodo.inicio))
+      .where('data', isLessThan: Timestamp.fromDate(periodo.fim))
+      .orderBy('data', descending: true)
+      .snapshots()
+      .map((snap) => snap.docs.map(Lancamento.fromDoc).toList());
 });
 
 final profissionaisProvider = StreamProvider<List<Profissional>>((ref) {

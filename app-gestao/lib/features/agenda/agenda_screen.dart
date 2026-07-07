@@ -200,11 +200,54 @@ class _AgendamentoCard extends ConsumerWidget {
 
   Future<void> _mudarStatus(
       BuildContext context, WidgetRef ref, String status) async {
+    int? valorCentavos;
+
+    if (status == 'concluido') {
+      // Dono confirma/ajusta o valor recebido — vira receita no financeiro.
+      final ctrl = TextEditingController(
+          text: (agendamento.precoCentavos / 100).toStringAsFixed(2));
+      final confirmado = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Concluir atendimento'),
+          content: TextField(
+            controller: ctrl,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+                labelText: 'Valor recebido', prefixText: 'R\$ '),
+            autofocus: true,
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Voltar')),
+            FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Concluir')),
+          ],
+        ),
+      );
+      if (confirmado != true) return;
+      final valor = double.tryParse(ctrl.text.replaceAll(',', '.'));
+      if (valor == null || valor < 0) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Valor inválido')));
+        }
+        return;
+      }
+      valorCentavos = (valor * 100).round();
+    }
+
     try {
       await ref
           .read(functionsProvider)
           .httpsCallable('atualizarStatusAgendamento')
-          .call({'agendamentoId': agendamento.id, 'status': status});
+          .call({
+        'agendamentoId': agendamento.id,
+        'status': status,
+        if (valorCentavos != null) 'valorCentavos': valorCentavos,
+      });
     } on FirebaseFunctionsException catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context)
