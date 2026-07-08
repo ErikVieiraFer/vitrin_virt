@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,6 +11,7 @@ import {
   Palette,
   LayoutTemplate,
   User,
+  CreditCard,
   LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -56,6 +57,11 @@ const menuItems = [
     label: 'Perfil',
     icon: User,
     href: '/dashboard/profile',
+  },
+  {
+    label: 'Assinatura',
+    icon: CreditCard,
+    href: '/dashboard/assinatura',
   },
 ];
 

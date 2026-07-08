@@ -126,6 +126,6 @@ Personalização final do app (nome, ícones, splash), builds iOS/Android, conta
 | 2 | **concluída** | Agenda dia c/ filtro por profissional, agendamento manual (slots via Function), concluir/cancelar/no-show via Function, bloqueios CRUD, push FCM registrado no login |
 | 3 | **concluída** | vitrine-publica/ (Next.js): página por slug/subdomínio, personalização (cores/logo/capa), fluxo serviço→prof→slot→dados, wa.me, /a/{token} cancela/reagenda |
 | 4 | **concluída** | Concluir atendimento → receita (valor ajustável) na mesma transação, receita avulsa, relatórios hoje/semana/mês (total, comissões, por profissional/serviço), aba Financeiro |
-| 5 | pendente | Produção MP depende de CNPJ (sandbox não bloqueia) |
+| 5 | **backend + tela prontos** | Produção MP depende de CNPJ (sandbox não bloqueia) |
 | 6 | pendente | |
 | 7 | pendente | Conta Apple ok; comprar conta Play Store |

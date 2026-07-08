@@ -47,7 +47,7 @@ agendamentos que os painéis antigos fazem). Não dá pra deployar as duas no me
 
 | Etapa | Status |
 |---|---|
-| R1 merge | pendente |
+| R1 merge | **concluida** (commit ad41b15) |
 | R2 sections na vitrine | pendente |
 | R3 editor no app | pendente |
 | R4 master adaptado | pendente (Fase 6) |
