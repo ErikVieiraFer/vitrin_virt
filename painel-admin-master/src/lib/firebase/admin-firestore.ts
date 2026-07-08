@@ -4,18 +4,48 @@ import { Tenant, TenantStats } from '@/types/tenant';
 import { Booking, BookingFilters } from '@/types/booking';
 import { ActivityLog, ActivityLogFilters } from '@/types/activity-log';
 import { GlobalStats } from '@/types/stats';
+import { toDate, pick } from './mappers';
+
+type Raw = Record<string, unknown>;
+
+/**
+ * Busca docs por tenant tolerando ambos os nomes de campo (`tenantId` canônico e
+ * `tenant_id` legado), mesclando por id. Ver /SCHEMA.md.
+ */
+async function getByTenant(
+  collectionName: string,
+  tenantId: string
+): Promise<Array<{ id: string; data: Raw }>> {
+  const ref = adminDb.collection(collectionName);
+  const [camelSnap, snakeSnap] = await Promise.all([
+    ref.where('tenantId', '==', tenantId).get(),
+    ref.where('tenant_id', '==', tenantId).get(),
+  ]);
+  const byId = new Map<string, Raw>();
+  for (const snap of [camelSnap, snakeSnap]) {
+    snap.docs.forEach((doc) => {
+      if (!byId.has(doc.id)) byId.set(doc.id, doc.data() as Raw);
+    });
+  }
+  return Array.from(byId.entries()).map(([id, data]) => ({ id, data }));
+}
 
 /**
  * Get all tenants
  */
 export async function getAllTenants(): Promise<Tenant[]> {
   try {
-    const tenantsSnapshot = await adminDb.collection('tenants').orderBy('created_at', 'desc').get();
+    // Sem orderBy no servidor: tenants criados pelo painel-cliente usam `createdAt` (camel)
+    // e seriam excluídos por um orderBy('created_at'). Ordenamos em memória. Ver /SCHEMA.md.
+    const tenantsSnapshot = await adminDb.collection('tenants').get();
 
-    return tenantsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Tenant[];
+    return tenantsSnapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }) as Tenant)
+      .sort(
+        (a, b) =>
+          toDate(pick(b as unknown as Raw, 'createdAt', 'created_at')).getTime() -
+          toDate(pick(a as unknown as Raw, 'createdAt', 'created_at')).getTime()
+      );
   } catch (error) {
     console.error('Error getting all tenants:', error);
     throw error;
@@ -48,52 +78,37 @@ export async function getTenantById(tenantId: string): Promise<Tenant | null> {
  */
 export async function getTenantStats(tenantId: string): Promise<TenantStats> {
   try {
-    // Get services count
-    const servicesSnapshot = await adminDb
-      .collection('tenants')
-      .doc(tenantId)
-      .collection('services')
-      .get();
+    // Serviços ficam na coleção TOP-LEVEL `services` filtrada por tenantId
+    // (não na subcoleção tenants/{id}/services). Ver /SCHEMA.md.
+    const services = await getByTenant('services', tenantId);
+    const activeServices = services.filter(s => s.data.active === true).length;
 
-    const activeServices = servicesSnapshot.docs.filter(doc => doc.data().active).length;
+    // Bookings tolerando tenantId/tenant_id; agregações feitas em memória sobre
+    // createdAt normalizado (o campo varia entre dados legados e canônicos).
+    const bookings = await getByTenant('bookings', tenantId);
 
-    // Get bookings count
-    const bookingsSnapshot = await adminDb
-      .collection('bookings')
-      .where('tenant_id', '==', tenantId)
-      .get();
-
-    const totalBookings = bookingsSnapshot.size;
-
-    // Get bookings this month
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const bookingsThisMonthSnapshot = await adminDb
-      .collection('bookings')
-      .where('tenant_id', '==', tenantId)
-      .where('created_at', '>=', admin.firestore.Timestamp.fromDate(startOfMonth))
-      .get();
-
-    // Get last booking date
-    const lastBookingSnapshot = await adminDb
-      .collection('bookings')
-      .where('tenant_id', '==', tenantId)
-      .orderBy('created_at', 'desc')
-      .limit(1)
-      .get();
-
-    const lastBookingDate = lastBookingSnapshot.docs.length > 0
-      ? lastBookingSnapshot.docs[0].data().created_at
-      : undefined;
+    let bookingsThisMonth = 0;
+    let lastBookingDate: Date | undefined;
+    for (const b of bookings) {
+      const created = toDate(pick(b.data, 'createdAt', 'created_at'));
+      if (created >= startOfMonth) bookingsThisMonth += 1;
+      if (!lastBookingDate || created > lastBookingDate) lastBookingDate = created;
+    }
 
     return {
-      total_services: servicesSnapshot.size,
+      total_services: services.length,
       active_services: activeServices,
-      total_bookings: totalBookings,
-      bookings_this_month: bookingsThisMonthSnapshot.size,
-      last_booking_date: lastBookingDate,
+      total_bookings: bookings.length,
+      bookings_this_month: bookingsThisMonth,
+      // cast: admin SDK Timestamp vs client SDK Timestamp (nominalmente distintos,
+      // mas ambos expõem .toDate()); o tipo TenantStats usa o do client SDK.
+      last_booking_date: (lastBookingDate
+        ? admin.firestore.Timestamp.fromDate(lastBookingDate)
+        : undefined) as TenantStats['last_booking_date'],
     };
   } catch (error) {
     console.error('Error getting tenant stats:', error);
@@ -235,18 +250,27 @@ export async function createTenant(data: {
   subdomain: string;
   email: string;
   whatsapp: string;
-  theme: {
-    primary_color: string;
-    secondary_color: string;
-    font: string;
+  ownerUid?: string;
+  themeSettings: {
+    primaryColor: string;
+    secondaryColor: string;
+    fontFamily: string;
+    logoUrl?: string;
   };
 }): Promise<string> {
   try {
+    // Schema canônico (camelCase). Ver /SCHEMA.md.
     const tenantRef = await adminDb.collection('tenants').add({
-      ...data,
+      name: data.name,
+      subdomain: data.subdomain,
+      email: data.email,
+      whatsapp: data.whatsapp,
+      ownerUid: data.ownerUid ?? null,
+      themeSettings: data.themeSettings,
+      sections: [],
       active: true,
-      created_at: admin.firestore.FieldValue.serverTimestamp(),
-      updated_at: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     // Create activity log
@@ -271,12 +295,13 @@ export async function updateTenant(tenantId: string, data: Partial<Tenant>): Pro
   try {
     const updateData = {
       ...data,
-      updated_at: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    // Remove id and created_at from update
-    delete (updateData as any).id;
-    delete (updateData as any).created_at;
+    // Nunca sobrescrever id nem timestamps de criação
+    delete (updateData as Raw).id;
+    delete (updateData as Raw).created_at;
+    delete (updateData as Raw).createdAt;
 
     await adminDb.collection('tenants').doc(tenantId).update(updateData);
 
@@ -301,79 +326,51 @@ export async function updateTenant(tenantId: string, data: Partial<Tenant>): Pro
  */
 export async function getGlobalStats(): Promise<GlobalStats> {
   try {
-    // Get total tenants
-    const tenantsSnapshot = await adminDb.collection('tenants').get();
-    const totalTenants = tenantsSnapshot.size;
-    const activeTenants = tenantsSnapshot.docs.filter(doc => doc.data().active).length;
-
-    // Get total bookings
-    const bookingsSnapshot = await adminDb.collection('bookings').get();
-    const totalBookings = bookingsSnapshot.size;
-
-    // Get bookings today
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
-
-    const bookingsTodaySnapshot = await adminDb
-      .collection('bookings')
-      .where('created_at', '>=', admin.firestore.Timestamp.fromDate(startOfDay))
-      .get();
-
-    const bookingsToday = bookingsTodaySnapshot.size;
-
-    // Get new tenants this month
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const newTenantsSnapshot = await adminDb
-      .collection('tenants')
-      .where('created_at', '>=', admin.firestore.Timestamp.fromDate(startOfMonth))
-      .get();
-
-    const newTenantsThisMonth = newTenantsSnapshot.size;
-
-    // Calculate growth (simplified - would need previous month data)
-    const growth = {
-      tenants: 0,
-      bookings: 0,
-    };
-
-    // Get top tenants by bookings
-    const tenantBookingCounts = new Map<string, { name: string; count: number }>();
-
-    bookingsSnapshot.docs.forEach(doc => {
-      const data = doc.data();
-      const tenantId = data.tenant_id;
-      const tenantName = data.tenant_name;
-
-      if (tenantBookingCounts.has(tenantId)) {
-        const current = tenantBookingCounts.get(tenantId)!;
-        tenantBookingCounts.set(tenantId, { name: tenantName, count: current.count + 1 });
-      } else {
-        tenantBookingCounts.set(tenantId, { name: tenantName, count: 1 });
-      }
+    // Tenants
+    const tenantsSnapshot = await adminDb.collection('tenants').get();
+    const totalTenants = tenantsSnapshot.size;
+    let activeTenants = 0;
+    let newTenantsThisMonth = 0;
+    tenantsSnapshot.docs.forEach((doc) => {
+      const data = doc.data() as Raw;
+      if (data.active === true) activeTenants += 1;
+      if (toDate(pick(data, 'createdAt', 'created_at')) >= startOfMonth) newTenantsThisMonth += 1;
     });
 
+    // Bookings — agregações em memória sobre createdAt normalizado (campo varia). Ver /SCHEMA.md.
+    const bookingsSnapshot = await adminDb.collection('bookings').get();
+    const totalBookings = bookingsSnapshot.size;
+    let bookingsToday = 0;
+    const tenantBookingCounts = new Map<string, { name: string; count: number }>();
+    bookingsSnapshot.docs.forEach((doc) => {
+      const data = doc.data() as Raw;
+      if (toDate(pick(data, 'createdAt', 'created_at')) >= startOfDay) bookingsToday += 1;
+
+      const tenantId = pick<string>(data, 'tenantId', 'tenant_id') ?? '';
+      const tenantName = pick<string>(data, 'tenantName', 'tenant_name') ?? '';
+      const current = tenantBookingCounts.get(tenantId);
+      tenantBookingCounts.set(tenantId, {
+        name: tenantName || current?.name || '',
+        count: (current?.count ?? 0) + 1,
+      });
+    });
+
+    const growth = { tenants: 0, bookings: 0 };
+
     const topTenants = Array.from(tenantBookingCounts.entries())
-      .map(([id, data]) => ({
-        id,
-        name: data.name,
-        bookingsCount: data.count,
-      }))
+      .map(([id, data]) => ({ id, name: data.name, bookingsCount: data.count }))
       .sort((a, b) => b.bookingsCount - a.bookingsCount)
       .slice(0, 10);
 
-    // Count total services
-    let totalServices = 0;
-    for (const tenantDoc of tenantsSnapshot.docs) {
-      const servicesSnapshot = await adminDb
-        .collection('tenants')
-        .doc(tenantDoc.id)
-        .collection('services')
-        .get();
-      totalServices += servicesSnapshot.size;
-    }
+    // Serviços ficam na coleção TOP-LEVEL `services` (não em subcoleções). Ver /SCHEMA.md.
+    const servicesSnapshot = await adminDb.collection('services').get();
+    const totalServices = servicesSnapshot.size;
 
     return {
       totalTenants: activeTenants,
@@ -388,6 +385,47 @@ export async function getGlobalStats(): Promise<GlobalStats> {
     console.error('Error getting global stats:', error);
     throw error;
   }
+}
+
+export interface AdminAnalytics {
+  totalTenants: number;
+  totalBookings: number;
+  monthly: Array<{ month: number; bookings: number; newTenants: number }>;
+}
+
+/**
+ * Agregações para a tela de Analytics (via Admin SDK, tolerando schema legado).
+ * Ver /SCHEMA.md. Roteado por API porque as regras restringem leitura ao dono.
+ */
+export async function getAnalytics(): Promise<AdminAnalytics> {
+  const [tenantsSnap, bookingsSnap] = await Promise.all([
+    adminDb.collection('tenants').get(),
+    adminDb.collection('bookings').get(),
+  ]);
+
+  const monthly = Array.from({ length: 12 }, (_, i) => ({
+    month: i,
+    bookings: 0,
+    newTenants: 0,
+  }));
+
+  tenantsSnap.docs.forEach((d) => {
+    const dt = toDate(pick(d.data() as Raw, 'createdAt', 'created_at'));
+    if (dt.getTime() > 0) monthly[dt.getMonth()].newTenants += 1;
+  });
+
+  bookingsSnap.docs.forEach((d) => {
+    const dt = toDate(
+      pick(d.data() as Raw, 'bookingDate', 'booking_date', 'date', 'createdAt', 'created_at')
+    );
+    if (dt.getTime() > 0) monthly[dt.getMonth()].bookings += 1;
+  });
+
+  return {
+    totalTenants: tenantsSnap.size,
+    totalBookings: bookingsSnap.size,
+    monthly,
+  };
 }
 
 /**

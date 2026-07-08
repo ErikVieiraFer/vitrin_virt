@@ -40,6 +40,9 @@ class BookingCubit extends Cubit<BookingState> {
   Future<void> submitBooking({
     required String tenantId,
     required String serviceId,
+    required String serviceName,
+    required double servicePrice,
+    required int serviceDuration,
     required String customerName,
     required String customerPhone,
     required DateTime bookingDate,
@@ -50,6 +53,9 @@ class BookingCubit extends Cubit<BookingState> {
     final result = await createBooking(
       tenantId: tenantId,
       serviceId: serviceId,
+      serviceName: serviceName,
+      servicePrice: servicePrice,
+      serviceDuration: serviceDuration,
       customerName: customerName,
       customerPhone: customerPhone,
       bookingDate: bookingDate,

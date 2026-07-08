@@ -12,11 +12,15 @@ class ThemeSettingsModel extends Equatable {
   final String primaryColor;
   final String secondaryColor;
   final String? fontFamily;
+  final String? backgroundColor;
+  final String? buttonStyle;
 
   const ThemeSettingsModel({
     required this.primaryColor,
     required this.secondaryColor,
     this.fontFamily,
+    this.backgroundColor,
+    this.buttonStyle,
   });
 
   /// Cria instância a partir de JSON.
@@ -28,6 +32,9 @@ class ThemeSettingsModel extends Equatable {
     final secondaryColor =
         (json['secondary_color'] ?? json['secondaryColor']) as String?;
     final fontFamily = (json['font_family'] ?? json['fontFamily']) as String?;
+    final backgroundColor =
+        (json['background_color'] ?? json['backgroundColor']) as String?;
+    final buttonStyle = (json['button_style'] ?? json['buttonStyle']) as String?;
 
     // Se não tiver cores, usa as cores padrão
     if (primaryColor == null || secondaryColor == null) {
@@ -36,6 +43,8 @@ class ThemeSettingsModel extends Equatable {
         primaryColor: primaryColor ?? defaults.primaryColor,
         secondaryColor: secondaryColor ?? defaults.secondaryColor,
         fontFamily: fontFamily,
+        backgroundColor: backgroundColor,
+        buttonStyle: buttonStyle,
       );
     }
 
@@ -43,6 +52,8 @@ class ThemeSettingsModel extends Equatable {
       primaryColor: primaryColor,
       secondaryColor: secondaryColor,
       fontFamily: fontFamily,
+      backgroundColor: backgroundColor,
+      buttonStyle: buttonStyle,
     );
   }
 
@@ -52,6 +63,8 @@ class ThemeSettingsModel extends Equatable {
       primaryColor: entity.primaryColor.value,
       secondaryColor: entity.secondaryColor.value,
       fontFamily: entity.fontFamily,
+      backgroundColor: entity.backgroundColor?.value,
+      buttonStyle: entity.buttonStyle,
     );
   }
 
@@ -61,6 +74,8 @@ class ThemeSettingsModel extends Equatable {
       'primary_color': primaryColor,
       'secondary_color': secondaryColor,
       if (fontFamily != null) 'font_family': fontFamily,
+      if (backgroundColor != null) 'background_color': backgroundColor,
+      if (buttonStyle != null) 'button_style': buttonStyle,
     };
   }
 
@@ -70,6 +85,8 @@ class ThemeSettingsModel extends Equatable {
       primaryColor: HexColor(primaryColor),
       secondaryColor: HexColor(secondaryColor),
       fontFamily: fontFamily,
+      backgroundColor: backgroundColor != null ? HexColor(backgroundColor!) : null,
+      buttonStyle: buttonStyle,
     );
   }
 
@@ -87,5 +104,6 @@ class ThemeSettingsModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [primaryColor, secondaryColor, fontFamily];
+  List<Object?> get props =>
+      [primaryColor, secondaryColor, fontFamily, backgroundColor, buttonStyle];
 }

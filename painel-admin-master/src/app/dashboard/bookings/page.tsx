@@ -1,33 +1,28 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
 import { TenantStatusBadge } from '@/components/tenant-status-badge';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2 } from 'lucide-react';
-
-interface Booking {
-  id: string;
-  tenantId: string;
-  customerName: string;
-  customerPhone: string;
-  bookingDate: string;
-  bookingTime: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
-}
+import { normalizeBooking, type MasterBookingRow } from '@/lib/firebase/mappers';
 
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<MasterBookingRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
+    // Sem orderBy no servidor: dados legados (Flutter) usam `created_at`/`booking_date`
+    // e seriam excluídos por um orderBy('createdAt'). Normalizamos e ordenamos em memória.
+    const q = query(collection(db, 'bookings'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Booking[];
+      const data = snapshot.docs
+        .map((doc) => normalizeBooking(doc.id, doc.data()))
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
       setBookings(data);
       setLoading(false);
     }, (err) => {
@@ -87,9 +82,9 @@ export default function BookingsPage() {
               ) : (
                 filtered.map(booking => (
                   <TableRow key={booking.id}>
-                    <TableCell>{booking.bookingDate}</TableCell>
+                    <TableCell>{booking.bookingDate.toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>{booking.bookingTime}</TableCell>
-                    <TableCell className="font-mono text-xs">{booking.tenantId}</TableCell>
+                    <TableCell className="font-mono text-xs">{booking.tenantName || booking.tenantId}</TableCell>
                     <TableCell>{booking.customerName}</TableCell>
                     <TableCell>{booking.customerPhone}</TableCell>
                     <TableCell><TenantStatusBadge status={booking.status} /></TableCell>

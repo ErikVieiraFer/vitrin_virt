@@ -10,25 +10,18 @@ import {
   where,
   orderBy,
   Timestamp,
-  DocumentData,
-  QueryConstraint,
 } from 'firebase/firestore';
 import { db } from './config';
 import type { Tenant, CreateTenantData, UpdateTenantData } from '@/types/tenant';
 import type { Service, CreateServiceData, UpdateServiceData } from '@/types/service';
 import type { Availability } from '@/types/availability';
-import type { Booking } from '@/types/booking';
-
-// Helper to convert Firestore timestamp to Date
-const convertTimestamp = (data: DocumentData): any => {
-  const converted: any = { ...data };
-  Object.keys(converted).forEach((key) => {
-    if (converted[key] instanceof Timestamp) {
-      converted[key] = converted[key].toDate();
-    }
-  });
-  return converted;
-};
+import type { Booking, BookingStatus } from '@/types/booking';
+import {
+  mapTenant,
+  mapService,
+  mapAvailability,
+  mapBooking,
+} from './mappers';
 
 // TENANT OPERATIONS
 export const createTenant = async (data: CreateTenantData): Promise<string> => {
@@ -56,10 +49,7 @@ export const getTenantByOwnerId = async (ownerUid: string): Promise<Tenant | nul
   }
 
   const doc = querySnapshot.docs[0];
-  return {
-    id: doc.id,
-    ...convertTimestamp(doc.data()),
-  } as Tenant;
+  return mapTenant(doc.id, doc.data());
 };
 
 export const getTenantBySubdomain = async (subdomain: string): Promise<Tenant | null> => {
@@ -71,10 +61,7 @@ export const getTenantBySubdomain = async (subdomain: string): Promise<Tenant | 
   }
 
   const doc = querySnapshot.docs[0];
-  return {
-    id: doc.id,
-    ...convertTimestamp(doc.data()),
-  } as Tenant;
+  return mapTenant(doc.id, doc.data());
 };
 
 export const updateTenant = async (id: string, data: UpdateTenantData): Promise<void> => {
@@ -105,10 +92,7 @@ export const getServicesByTenantId = async (tenantId: string): Promise<Service[]
   );
   const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...convertTimestamp(doc.data()),
-  })) as Service[];
+  return querySnapshot.docs.map((doc) => mapService(doc.id, doc.data()));
 };
 
 export const getServiceById = async (id: string): Promise<Service | null> => {
@@ -119,10 +103,7 @@ export const getServiceById = async (id: string): Promise<Service | null> => {
     return null;
   }
 
-  return {
-    id: docSnap.id,
-    ...convertTimestamp(docSnap.data()),
-  } as Service;
+  return mapService(docSnap.id, docSnap.data());
 };
 
 export const updateService = async (id: string, data: UpdateServiceData): Promise<void> => {
@@ -148,10 +129,7 @@ export const getAvailabilityByTenantId = async (tenantId: string): Promise<Avail
   }
 
   const doc = querySnapshot.docs[0];
-  return {
-    id: doc.id,
-    ...convertTimestamp(doc.data()),
-  } as Availability;
+  return mapAvailability(doc.id, doc.data());
 };
 
 export const createOrUpdateAvailability = async (
@@ -177,34 +155,61 @@ export const createOrUpdateAvailability = async (
 };
 
 // BOOKING OPERATIONS
+//
+// Bookings são criados pelo app Flutter. Durante a transição do contrato de schema
+// (ver /SCHEMA.md) podem existir docs legados com `tenant_id` (snake) e docs canônicos
+// com `tenantId` (camel). Consultamos os dois campos e mesclamos, ordenando em memória —
+// assim a tela funciona antes e depois da migração rodar.
 export const getBookingsByTenantId = async (
   tenantId: string,
   filters?: { date?: Date; status?: string }
 ): Promise<Booking[]> => {
-  const constraints: QueryConstraint[] = [
-    where('tenantId', '==', tenantId),
-    orderBy('date', 'desc'),
-  ];
+  const bookingsRef = collection(db, 'bookings');
+  const [camelSnap, snakeSnap] = await Promise.all([
+    getDocs(query(bookingsRef, where('tenantId', '==', tenantId))),
+    getDocs(query(bookingsRef, where('tenant_id', '==', tenantId))),
+  ]);
 
-  if (filters?.status) {
-    constraints.push(where('status', '==', filters.status));
-  }
-
-  const q = query(collection(db, 'bookings'), ...constraints);
-  const querySnapshot = await getDocs(q);
-
-  let bookings = querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...convertTimestamp(doc.data()),
-  })) as Booking[];
-
-  // Filter by date on client side (Firestore doesn't support complex date queries easily)
-  if (filters?.date) {
-    const filterDate = filters.date.toDateString();
-    bookings = bookings.filter((booking) => {
-      return booking.date.toDateString() === filterDate;
+  // Mescla por id (um doc pode aparecer só em uma das queries).
+  const byId = new Map<string, Booking>();
+  for (const snap of [camelSnap, snakeSnap]) {
+    snap.docs.forEach((doc) => {
+      if (!byId.has(doc.id)) byId.set(doc.id, mapBooking(doc.id, doc.data()));
     });
   }
 
+  let bookings = Array.from(byId.values()).sort(
+    (a, b) => b.date.getTime() - a.date.getTime()
+  );
+
+  if (filters?.status) {
+    bookings = bookings.filter((b) => b.status === filters.status);
+  }
+
+  if (filters?.date) {
+    const filterDate = filters.date.toDateString();
+    bookings = bookings.filter((b) => b.date.toDateString() === filterDate);
+  }
+
   return bookings;
+};
+
+// Atualiza o status de um agendamento (pending/confirmed/cancelled/completed).
+// Grava no schema canônico (ver /SCHEMA.md). Requer regra de update em bookings.
+export const updateBookingStatus = async (
+  id: string,
+  status: BookingStatus
+): Promise<void> => {
+  await updateDoc(doc(db, 'bookings', id), {
+    status,
+    updatedAt: Timestamp.now(),
+  });
+};
+
+// Atualiza a nota interna do dono sobre um agendamento.
+export const updateBookingNotes = async (id: string, notes: string): Promise<void> => {
+  await updateDoc(doc(db, 'bookings', id), {
+    notes,
+    updatedAt: Timestamp.now(),
+  });
 };

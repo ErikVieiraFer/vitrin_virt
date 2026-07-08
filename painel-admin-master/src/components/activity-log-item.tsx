@@ -1,4 +1,4 @@
-import { ActivityLog, ActivityType } from '@/types/activity-log';
+import { ActivityLogView, ActivityType } from '@/types/activity-log';
 import { formatDateTime } from '@/lib/utils';
 import {
   UserPlus,
@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 interface ActivityLogItemProps {
-  log: ActivityLog;
+  log: ActivityLogView;
 }
 
 const iconMap: Record<ActivityType, any> = {
@@ -59,14 +59,14 @@ export function ActivityLogItem({ log }: ActivityLogItemProps) {
       <div className="flex-1 min-w-0">
         <p className="font-medium">{log.description}</p>
 
-        {log.tenant_name && (
+        {log.tenantName && (
           <p className="text-sm text-muted-foreground mt-1">
-            Cliente: {log.tenant_name}
+            Cliente: {log.tenantName}
           </p>
         )}
 
         <p className="text-xs text-muted-foreground mt-2">
-          {formatDateTime(log.created_at.toDate())}
+          {formatDateTime(new Date(log.createdAt))}
         </p>
       </div>
     </div>

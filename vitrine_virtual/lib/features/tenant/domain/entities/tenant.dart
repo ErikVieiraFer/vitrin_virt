@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../core/domain/value_objects/phone.dart';
 import 'theme_settings.dart';
+import 'vitrine_section.dart';
 
 /// Entity para Tenant (estabelecimento/negócio).
 ///
@@ -15,6 +16,7 @@ class Tenant extends Equatable {
   final String logoUrl;
   final Phone whatsapp;
   final ThemeSettings themeSettings;
+  final List<VitrineSection> sections;
 
   const Tenant({
     required this.id,
@@ -23,6 +25,7 @@ class Tenant extends Equatable {
     required this.logoUrl,
     required this.whatsapp,
     required this.themeSettings,
+    this.sections = const [],
   });
 
   /// Verifica se o tenant está configurado corretamente.
@@ -68,6 +71,7 @@ class Tenant extends Equatable {
     String? logoUrl,
     Phone? whatsapp,
     ThemeSettings? themeSettings,
+    List<VitrineSection>? sections,
   }) {
     return Tenant(
       id: id ?? this.id,
@@ -76,6 +80,7 @@ class Tenant extends Equatable {
       logoUrl: logoUrl ?? this.logoUrl,
       whatsapp: whatsapp ?? this.whatsapp,
       themeSettings: themeSettings ?? this.themeSettings,
+      sections: sections ?? this.sections,
     );
   }
 
@@ -87,5 +92,6 @@ class Tenant extends Equatable {
         logoUrl,
         whatsapp,
         themeSettings,
+        sections,
       ];
 }

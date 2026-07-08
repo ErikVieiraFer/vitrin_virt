@@ -14,6 +14,9 @@ class BookingModel extends Equatable {
   final String id;
   final String tenantId;
   final String serviceId;
+  final String serviceName;
+  final double servicePrice;
+  final int serviceDuration;
   final String customerName;
   final String customerPhone;
   final DateTime bookingDate;
@@ -25,6 +28,9 @@ class BookingModel extends Equatable {
     required this.id,
     required this.tenantId,
     required this.serviceId,
+    this.serviceName = '',
+    this.servicePrice = 0,
+    this.serviceDuration = 0,
     required this.customerName,
     required this.customerPhone,
     required this.bookingDate,
@@ -39,12 +45,17 @@ class BookingModel extends Equatable {
       id: id,
       tenantId: (json['tenant_id'] ?? json['tenantId']) as String,
       serviceId: (json['service_id'] ?? json['serviceId']) as String,
+      serviceName: (json['service_name'] ?? json['serviceName'] ?? '') as String,
+      servicePrice:
+          ((json['service_price'] ?? json['servicePrice'] ?? 0) as num).toDouble(),
+      serviceDuration:
+          ((json['service_duration'] ?? json['serviceDuration'] ?? 0) as num).toInt(),
       customerName: (json['customer_name'] ?? json['customerName']) as String,
       customerPhone: (json['customer_phone'] ?? json['customerPhone']) as String,
-      bookingDate: (json['booking_date'] as Timestamp).toDate(),
+      bookingDate: ((json['booking_date'] ?? json['bookingDate']) as Timestamp).toDate(),
       bookingTime: (json['booking_time'] ?? json['bookingTime']) as String,
       status: json['status'] as String,
-      createdAt: (json['created_at'] as Timestamp).toDate(),
+      createdAt: ((json['created_at'] ?? json['createdAt']) as Timestamp).toDate(),
     );
   }
 
@@ -54,6 +65,9 @@ class BookingModel extends Equatable {
       id: entity.id,
       tenantId: entity.tenantId,
       serviceId: entity.serviceId,
+      serviceName: entity.serviceName,
+      servicePrice: entity.servicePrice,
+      serviceDuration: entity.serviceDuration,
       customerName: entity.customerName,
       customerPhone: entity.customerPhone.value,
       bookingDate: entity.bookingDate,
@@ -64,16 +78,23 @@ class BookingModel extends Equatable {
   }
 
   /// Converte para JSON para persistência.
+  ///
+  /// Emite o schema canônico em camelCase (ver /SCHEMA.md). A leitura (`fromJson`)
+  /// mantém fallback snake_case para dados legados até a migração rodar.
   Map<String, dynamic> toJson() {
     return {
-      'tenant_id': tenantId,
-      'service_id': serviceId,
-      'customer_name': customerName,
-      'customer_phone': customerPhone,
-      'booking_date': Timestamp.fromDate(bookingDate),
-      'booking_time': bookingTime,
+      'tenantId': tenantId,
+      'serviceId': serviceId,
+      'serviceName': serviceName,
+      'servicePrice': servicePrice,
+      'serviceDuration': serviceDuration,
+      'customerName': customerName,
+      'customerPhone': customerPhone,
+      'bookingDate': Timestamp.fromDate(bookingDate),
+      'bookingTime': bookingTime,
       'status': status,
-      'created_at': Timestamp.fromDate(createdAt),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(createdAt),
     };
   }
 
@@ -83,6 +104,9 @@ class BookingModel extends Equatable {
       id: id,
       tenantId: tenantId,
       serviceId: serviceId,
+      serviceName: serviceName,
+      servicePrice: servicePrice,
+      serviceDuration: serviceDuration,
       customerName: customerName,
       customerPhone: Phone(customerPhone),
       bookingDate: bookingDate,
@@ -97,6 +121,9 @@ class BookingModel extends Equatable {
         id,
         tenantId,
         serviceId,
+        serviceName,
+        servicePrice,
+        serviceDuration,
         customerName,
         customerPhone,
         bookingDate,

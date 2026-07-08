@@ -9,6 +9,7 @@ import {
   Clock,
   Calendar,
   Palette,
+  LayoutTemplate,
   User,
   LogOut,
 } from 'lucide-react';
@@ -40,6 +41,11 @@ const menuItems = [
     label: 'Agendamentos',
     icon: Calendar,
     href: '/dashboard/bookings',
+  },
+  {
+    label: 'Vitrine',
+    icon: LayoutTemplate,
+    href: '/dashboard/editor',
   },
   {
     label: 'Personalização',

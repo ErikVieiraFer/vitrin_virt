@@ -13,6 +13,9 @@ class Booking extends Equatable {
   final String id;
   final String tenantId;
   final String serviceId;
+  final String serviceName;
+  final double servicePrice;
+  final int serviceDuration;
   final String customerName;
   final Phone customerPhone;
   final DateTime bookingDate;
@@ -24,6 +27,9 @@ class Booking extends Equatable {
     required this.id,
     required this.tenantId,
     required this.serviceId,
+    this.serviceName = '',
+    this.servicePrice = 0,
+    this.serviceDuration = 0,
     required this.customerName,
     required this.customerPhone,
     required this.bookingDate,
@@ -113,6 +119,9 @@ class Booking extends Equatable {
     String? id,
     String? tenantId,
     String? serviceId,
+    String? serviceName,
+    double? servicePrice,
+    int? serviceDuration,
     String? customerName,
     Phone? customerPhone,
     DateTime? bookingDate,
@@ -124,6 +133,9 @@ class Booking extends Equatable {
       id: id ?? this.id,
       tenantId: tenantId ?? this.tenantId,
       serviceId: serviceId ?? this.serviceId,
+      serviceName: serviceName ?? this.serviceName,
+      servicePrice: servicePrice ?? this.servicePrice,
+      serviceDuration: serviceDuration ?? this.serviceDuration,
       customerName: customerName ?? this.customerName,
       customerPhone: customerPhone ?? this.customerPhone,
       bookingDate: bookingDate ?? this.bookingDate,
@@ -162,6 +174,9 @@ class Booking extends Equatable {
         id,
         tenantId,
         serviceId,
+        serviceName,
+        servicePrice,
+        serviceDuration,
         customerName,
         customerPhone,
         bookingDate,

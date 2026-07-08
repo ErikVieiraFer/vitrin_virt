@@ -39,3 +39,12 @@ export const uploadTenantLogo = async (
   const path = `tenants/${tenantId}/logo/${filename}`;
   return uploadImage(file, path);
 };
+
+export const uploadSectionImage = async (
+  tenantId: string,
+  file: File
+): Promise<string> => {
+  const filename = `${Date.now()}_${file.name}`;
+  const path = `tenants/${tenantId}/sections/${filename}`;
+  return uploadImage(file, path);
+};

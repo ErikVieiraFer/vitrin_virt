@@ -71,6 +71,11 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/tenants/$(resource.data.tenantId)) &&
         get(/databases/$(database)/documents/tenants/$(resource.data.tenantId)).data.ownerUid == request.auth.uid;
       allow create: if true;
+      // O dono do tenant pode atualizar status/nota (sem trocar de tenant).
+      allow update: if request.auth != null &&
+        exists(/databases/$(database)/documents/tenants/$(resource.data.tenantId)) &&
+        get(/databases/$(database)/documents/tenants/$(resource.data.tenantId)).data.ownerUid == request.auth.uid &&
+        request.resource.data.tenantId == resource.data.tenantId;
     }
   }
 }

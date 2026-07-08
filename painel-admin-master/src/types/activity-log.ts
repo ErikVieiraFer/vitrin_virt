@@ -32,3 +32,12 @@ export interface ActivityLogFilters {
   startDate?: Date;
   endDate?: Date;
 }
+
+/** Shape serializável (createdAt em ISO) para consumo no cliente. */
+export interface ActivityLogView {
+  id: string;
+  type: ActivityType;
+  tenantName: string | null;
+  description: string;
+  createdAt: string;
+}
